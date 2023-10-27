@@ -1,0 +1,50 @@
+# test01
+#
+xgainsaw liftover -i data/liftovers/mm10ToMm39.over.chain.gz -o mm10ToMm39 -d data -c work.conf
+xgainsaw pointset -p test/mm10.Ctbp.bed -l mm10ToMm39 -d data -c work.conf
+
+# test02
+#
+xgainsaw check -p mm10.Ctbp -n 0 -d data -c work.conf
+
+# test03
+#
+xgainsaw liftover -i data/liftovers/mm39chr5and7ToRn7.over.chain -o mm39chr5and7ToRn7 -d data -c work.conf
+
+# test04
+#
+xgainsaw pointset -p test/mm39.Ctbp.bed -l mm39chr5and7ToRn7 -d data -c work.conf
+xgainsaw check -p mm39.Ctbp -n 0 -d data -c work.conf
+xgainsaw align -q mm39 -t rn7 -p mm39.Ctbp -s 0 -d data -c work.conf > tout04
+
+# test05
+#
+xgainsaw pointset -p test/mm39.Ctbp-points.bed -l mm39chr5and7ToRn7 -d data -c work.conf
+xgainsaw align -q mm39 -t rn7 -p mm39.Ctbp-points -s 25 -x lastz -r -d data -c work.conf > tout05
+
+# test06
+#
+xgainsaw align -q mm39 -t rn7 -p mm39.Ctbp-points -s 50 -x default -r -d data -c work.conf > tout06
+
+
+# test07: Filtering
+#
+xgainsaw pointset -p test/mm39randomSNPs.bed -l mm39chr5and7ToRn7 -d data -c work.conf
+
+# ... setting the filter level to 3 for all points; there are 37 accepted points that do not include the unlifted points:
+xgainsaw filter -q mm39 -t rn7 -p mm39randomSNPs -s  0 -r 100 --set_filter_level 3 -m 'at_least' --use_filter_level 0 -n 0 -d data -c work.conf > tout07a
+
+# ... with slop size 50 and allowed mismatch rate 10%, there are 4 qualifed points (level 2); there are 10 points accepted at level 1 (within bounds):
+xgainsaw filter -q mm39 -t rn7 -p mm39randomSNPs -s 50 -r  10 --set_filter_level 2 -m 'at_least' --use_filter_level 1 -n 0 -d data -c work.conf > tout07b
+
+# ... with slop size 50 and allowed mismatch rate 10%, there are 4 accepted points, here labeled as level 3: 
+xgainsaw filter -q mm39 -t rn7 -p mm39randomSNPs -s 50 -r  10 --set_filter_level 3 -m 'equal'    --use_filter_level 3 -n 0 -d data -c work.conf > tout07c
+
+# ... successive filtering: lowering the match rate to 8% on the previously accepted set, there are 2 accepted points at the new level:
+xgainsaw filter -q mm39 -t rn7 -p filtered_s50r10_equal_3_accepted_mm39randomSNPs -s 50 -r 8 --set_filter_level 4 -m 'equal'    --use_filter_level 4 -n 0 -d data -c work.conf > tout07d
+
+
+# Cleanup:
+#
+mkdir FILTERED
+mv filtered*.pkl accepted*.bed unlifted*.bed  FILTERED/

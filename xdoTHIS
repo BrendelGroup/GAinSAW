@@ -1,0 +1,7 @@
+./xsetup
+\rm -rf downloads/ data/genomes/*/*.fna
+./xtestgainsaw 
+
+cd test
+./xinitialtests >& showi
+./xtestall >& showa

@@ -1,0 +1,15 @@
+# Ctbp1 start/end in mouse mm39, given as separate points, with two points
+# inbetween that correspond to the first annotated CDS segment in mm39:
+#
+chr5	33405066	33405067	#Ctbp1 start
+chr5	33404990	33405261	# corresponding alb
+chr5	33418352	33418353	# CDS start
+chr5	33418469	33418470	# CDS end
+chr5	33432337	33432338	#Ctbp1 end
+chr5	33432082	33432673	# corresponding alb
+
+# Ctbp2 start/end in mouse mm39, given as an interval:
+#
+chr7	132589291	132617219	#Ctbp2 start and end
+chr7	132588896	132589351	# start alb
+chr7	132617187	132617251	# end alb

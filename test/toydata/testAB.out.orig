@@ -1,0 +1,221 @@
+... building LiftOver object
+... done
+... saving LiftOver object  ./AtoB.over.chain.lo.pkl
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+[(0, 'Achr1', 0, 'Bchr2', '+', 0, 24, 0, 24, '1', 500)]
+[(23, 'Achr1', 23, 'Bchr2', '+', 0, 24, 0, 24, '1', 500)]
+[(24, 'Achr1', 34, 'Bchr2', '+', 24, 44, 34, 54, '1', 500)]
+[(43, 'Achr1', 53, 'Bchr2', '+', 24, 44, 34, 54, '1', 500)]
+[]
+[(56, 'Achr1', 75, 'Bchr2', '-', 56, 78, 54, 76, '2', 100)]
+[(66, 'Achr1', 65, 'Bchr2', '-', 56, 78, 54, 76, '2', 100)]
+[(77, 'Achr1', 54, 'Bchr2', '-', 56, 78, 54, 76, '2', 100)]
+[(78, 'Achr1', 76, 'Bchr2', '+', 78, 98, 76, 96, '3', 50)]
+[(97, 'Achr1', 95, 'Bchr2', '+', 78, 98, 76, 96, '3', 50)]
+
+Using slop=0
+... building and saving fasta index for  ./A.fna
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+... building and saving fasta index for  ./B.fna
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+There are  4  set(s) of segment sequences: 
+
+*** Alignment(s) ***
+Achr1:0-24|Bchr2:0-24(query|target)
+Strand = +/+(query|target)
+Score =  48.0
+Mismatch =  0/24/0.0%
+Target strand =  +
+target            0 ACCTACCTACCTACCTACCTACCT 24
+                  0 |||||||||||||||||||||||| 24
+query             0 ACCTACCTACCTACCTACCTACCT 24
+
+
+*** Alignment(s) ***
+Achr1:24-44|Bchr2:34-54(query|target)
+Strand = +/+(query|target)
+Score =  40.0
+Mismatch =  0/20/0.0%
+Target strand =  +
+target            0 GGATGGATGGATGGATGGAT 20
+                  0 |||||||||||||||||||| 20
+query             0 GGATGGATGGATGGATGGAT 20
+
+
+*** Alignment(s) ***
+Achr1:56-78|Bchr2:54-76(query|target)
+Strand = +/-(query|target)
+Score =  44.0
+Mismatch =  0/22/0.0%
+Target strand =  -
+target            0 GGGGGGGGGGAGGGGGGGGGGG 22
+                  0 |||||||||||||||||||||| 22
+query             0 GGGGGGGGGGAGGGGGGGGGGG 22
+
+
+*** Alignment(s) ***
+Achr1:78-98|Bchr2:76-96(query|target)
+Strand = +/+(query|target)
+Score =  40.0
+Mismatch =  0/20/0.0%
+Target strand =  +
+target            0 GGCAGGCAGGCAGGCAGGCA 20
+                  0 |||||||||||||||||||| 20
+query             0 GGCAGGCAGGCAGGCAGGCA 20
+
+
+Using slop=4
+... building and saving fasta index for  ./A.fna
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+... building and saving fasta index for  ./B.fna
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+j in i in pdata:  (0, 'Achr1', 0, 'Bchr2', '+', 0, 24, 0, 24, '1', 500)
+j in i in pdata:  (23, 'Achr1', 23, 'Bchr2', '+', 0, 24, 0, 24, '1', 500)
+j in i in pdata:  (24, 'Achr1', 34, 'Bchr2', '+', 24, 44, 34, 54, '1', 500)
+j in i in pdata:  (43, 'Achr1', 53, 'Bchr2', '+', 24, 44, 34, 54, '1', 500)
+j in i in pdata:  (56, 'Achr1', 75, 'Bchr2', '-', 56, 78, 54, 76, '2', 100)
+j in i in pdata:  (66, 'Achr1', 65, 'Bchr2', '-', 56, 78, 54, 76, '2', 100)
+j in i in pdata:  (77, 'Achr1', 54, 'Bchr2', '-', 56, 78, 54, 76, '2', 100)
+j in i in pdata:  (78, 'Achr1', 76, 'Bchr2', '+', 78, 98, 76, 96, '3', 50)
+j in i in pdata:  (97, 'Achr1', 95, 'Bchr2', '+', 78, 98, 76, 96, '3', 50)
+
+There are  9  set(s) of extended_point sequences: 
+('Achr1:-4-5|Bchr2:-4-5', (Seq('ACCTA'), Seq('ACCTA'), '+'))
+('Achr1:19-28|Bchr2:19-28', (Seq('TACCTGGAT'), Seq('TACCTTTTT'), '+'))
+('Achr1:20-29|Bchr2:30-39', (Seq('ACCTGGATG'), Seq('TTTCGGATG'), '+'))
+('Achr1:39-48|Bchr2:49-58', (Seq('TGGATAAAA'), Seq('TGGATCCCC'), '+'))
+('Achr1:52-61|Bchr2:71-80', (Seq('AAAAGGGGG'), Seq('TGCCGGGGG'), '-'))
+('Achr1:62-71|Bchr2:61-70', (Seq('GGGGAGGGG'), Seq('GGGGAGGGG'), '-'))
+('Achr1:73-82|Bchr2:50-59', (Seq('GGGGGGGCA'), Seq('GGGGGATCC'), '-'))
+('Achr1:74-83|Bchr2:72-81', (Seq('GGGGGGCAG'), Seq('CCCCGGCAG'), '+'))
+('Achr1:93-102|Bchr2:91-100', (Seq('AGGCAGG'), Seq('AGGCATAAA'), '+'))
+
+*** Alignment(s) ***
+Achr1:-4-5|Bchr2:-4-5(query|target)
+Strand = +/+(query|target)
+Score =  10.0
+Mismatch =  0/5/0.0%
+Target strand =  +
+target            0 ACCTA 5
+                  0 ||||| 5
+query             0 ACCTA 5
+
+
+*** Alignment(s) ***
+Achr1:19-28|Bchr2:19-28(query|target)
+Strand = +/+(query|target)
+Score =  3.0
+Mismatch =  3/9/33.3%
+Target strand =  +
+target            0 TACCTTTTT 9
+                  0 |||||...| 9
+query             0 TACCTGGAT 9
+
+
+*** Alignment(s) ***
+Achr1:20-29|Bchr2:30-39(query|target)
+Strand = +/+(query|target)
+Score =  -2.0
+Mismatch =  4/9/44.4%
+Target strand =  +
+target            0 TTTCGGATG 9
+                  0 ....||||| 9
+query             0 ACCTGGATG 9
+
+
+*** Alignment(s) ***
+Achr1:39-48|Bchr2:49-58(query|target)
+Strand = +/+(query|target)
+Score =  -2.0
+Mismatch =  4/9/44.4%
+Target strand =  +
+target            0 TGGATCCCC 9
+                  0 |||||.... 9
+query             0 TGGATAAAA 9
+
+
+*** Alignment(s) ***
+Achr1:52-61|Bchr2:71-80(query|target)
+Strand = +/-(query|target)
+Score =  -2.0
+Mismatch =  4/9/44.4%
+Target strand =  -
+target            0 TGCCGGGGG 9
+                  0 ....||||| 9
+query             0 AAAAGGGGG 9
+
+
+*** Alignment(s) ***
+Achr1:62-71|Bchr2:61-70(query|target)
+Strand = +/-(query|target)
+Score =  18.0
+Mismatch =  0/9/0.0%
+Target strand =  -
+target            0 GGGGAGGGG 9
+                  0 ||||||||| 9
+query             0 GGGGAGGGG 9
+
+
+*** Alignment(s) ***
+Achr1:73-82|Bchr2:50-59(query|target)
+Strand = +/-(query|target)
+Score =  3.0
+Mismatch =  3/9/33.3%
+Target strand =  -
+target            0 GGGGGATCC 9
+                  0 |||||..|. 9
+query             0 GGGGGGGCA 9
+
+
+*** Alignment(s) ***
+Achr1:74-83|Bchr2:72-81(query|target)
+Strand = +/+(query|target)
+Score =  -2.0
+Mismatch =  4/9/44.4%
+Target strand =  +
+target            0 CCCCGGCAG 9
+                  0 ....||||| 9
+query             0 GGGGGGCAG 9
+
+
+*** Alignment(s) ***
+Achr1:93-102|Bchr2:91-100(query|target)
+Strand = +/+(query|target)
+Score =  -5.0
+Note: gapped alignment
+Mismatch =  2/7/28.6%
+Target strand =  +
+target            0 AGGCATAAA 9
+                  0 ||||--|.. 9
+query             0 AGGC--AGG 7
+
+Note: gapped alignment
+Mismatch =  2/7/28.6%
+Target strand =  +
+target            0 AGGCATAAA 9
+                  0 |||||--.. 9
+query             0 AGGCA--GG 7
+
+Note: gapped alignment
+Mismatch =  2/7/28.6%
+Target strand =  +
+target            0 AGGCATAAA 9
+                  0 |||||.--. 9
+query             0 AGGCAG--G 7
+
+Mismatch =  2/7/28.6%
+Target strand =  +
+target            0 AGGCATAAA 9
+                  0 |||||..-- 9
+query             0 AGGCAGG-- 7
+

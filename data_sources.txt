@@ -1,0 +1,40 @@
+# xgainsaw download template file
+# 
+# Each genome entry consists of Label, gDNA, Sizes, GFF, and Alias entries, representing
+# respectively a name for the genome, a filename or URL for the genome sequence file, a
+# UCSC style "genome file" giving the lengths of the genome sequences, a filename or URL
+# for a corresponding (NCBI style) GFF annotation file, and a UCSC style Alias file
+# converting NCBI sequence identifiers to UCSC identifiers.
+#
+# Please see the following example. Replace the comment line and second column entries
+# appropriate for your upload needs.
+
+# Usage: xgainsaw download -q mm39
+
+
+# Mouse assembly version mm10
+#
+Label	mm10
+gDNA	https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.fa.gz
+Sizes	https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/mm10.chrom.sizes
+Alias	https://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/chromAlias.txt.gz
+Chain	https://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/mm10ToMm39.over.chain.gz
+
+# Mouse assembly version mm39
+#
+Label	mm39
+gDNA	https://hgdownload.soe.ucsc.edu/goldenPath/mm39/bigZips/mm39.fa.gz
+Sizes	https://hgdownload.soe.ucsc.edu/goldenPath/mm39/bigZips/mm39.chrom.sizes
+GFF	https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39/GCF_000001635.27_GRCm39_genomic.gff.gz
+Alias	https://hgdownload.cse.ucsc.edu/goldenPath/mm39/database/chromAlias.txt.gz
+Chain	https://hgdownload.soe.ucsc.edu/goldenPath/mm39/liftOver/mm39ToMm10.over.chain.gz
+Chain	https://hgdownload.soe.ucsc.edu/goldenPath/mm39/liftOver/mm39ToRn7.over.chain.gz
+
+# Rat assembly version rn7
+#
+Label	rn7
+gDNA	https://hgdownload.soe.ucsc.edu/goldenPath/rn7/bigZips/rn7.fa.gz
+Sizes	https://hgdownload.soe.ucsc.edu/goldenPath/rn7/bigZips/rn7.chrom.sizes
+GFF	https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/015/227/675/GCF_015227675.2_mRatBN7.2/GCF_015227675.2_mRatBN7.2_genomic.gff.gz	
+Alias	https://hgdownload.soe.ucsc.edu/goldenPath/rn7/bigZips/rn7.chromAlias.txt
+

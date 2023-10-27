@@ -1,0 +1,57 @@
+gainsaw version:  0.1 
+
+
+***
+  The file mm10.Ctbp.bed shows the locations of the two Ctbp genes in mouse
+  mm10. For Ctbp1, start and end points are given on two separate lines. For
+  Ctbp2, start and end are on one line.  The commands
+    lo = LiftOver('mm10ToMm39.over.chain.gz','../data/liftovers')
+    ps = PointSet(lo,"mm10.Ctbp.bed")
+  create, first, the LiftOver object lo from the input chain file, and, second,
+  the PointSet object ps (with slot ps.lopset), derived from lo and the input
+  bed file.
+***
+
+... building LiftOver object for input  ../data/liftovers/mm10ToMm39.over.chain.gz
+... done
+... saving LiftOver object  ../data/liftovers/mm10ToMm39.over.chain.gz.lo.pkl
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+
+***
+  ps.lopset.pdata has the records of the input and lifted coordinates, which
+  can be checked by:
+    print(ps.lopset.pdata)
+***
+
+{'chr5_33247722': [(33247722, 'chr5', 33405066, 'chr5', '+', 30339671, 38300289, 30497015, 38457633, '6', 14025902023, [1])], 'chr5_33274993': [(33274993, 'chr5', 33432337, 'chr5', '+', 30339671, 38300289, 30497015, 38457633, '6', 14025902023, [1])], 'chr7_132987562': [(132987562, 'chr7', 132589291, 'chr7', '+', 131107220, 139033259, 130708949, 138634988, '8', 13436734948, [1])], 'chr7_133015489': [(133015489, 'chr7', 132617218, 'chr7', '+', 131107220, 139033259, 130708949, 138634988, '8', 13436734948, [1])]}
+
+***
+  More clearly:
+    ps.check_pdata(0)
+***
+
+[(33247722, 'chr5', 33405066, 'chr5', '+', 30339671, 38300289, 30497015, 38457633, '6', 14025902023, [1])]
+[(33274993, 'chr5', 33432337, 'chr5', '+', 30339671, 38300289, 30497015, 38457633, '6', 14025902023, [1])]
+[(132987562, 'chr7', 132589291, 'chr7', '+', 131107220, 139033259, 130708949, 138634988, '8', 13436734948, [1])]
+[(133015489, 'chr7', 132617218, 'chr7', '+', 131107220, 139033259, 130708949, 138634988, '8', 13436734948, [1])]
+
+***
+  To follow up on the program's suggestion, we can used the saved LiftOver
+  object in a subsequent run of the script. To do this, we would need to
+  replace the line
+    lo = LiftOver('mm10ToMm39.over.chain.gz','../data/liftovers')
+  with
+    lo = LiftOver('mm10ToMm39.over.chain.gz.lo.pkl','../data/liftovers')
+  Try this on your own.
+
+  To simplify further, we can rename the pickle to something shorter and add an
+  entry to our test.gainsaw.conf file:
+    cp default.gainsaw.conf test.gainsaw.conf
+    mv ../data/liftovers/mm10ToMm39.over.chain.gz.lo.pkl ../data/liftovers/mm10ToMm39.lo.pkl
+    sed -i -e "/\[liftovers\]/a mm10ToMm39 = ../data/liftovers/mm10ToMm39.lo.pkl" test.gainsaw.conf
+
+  Please do this and then proceed with test02.py.
+***
+

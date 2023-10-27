@@ -1,0 +1,6 @@
+Run
+  python test*.py
+or
+  ./xinitialtests
+
+for annotated gainsaw usage examples.

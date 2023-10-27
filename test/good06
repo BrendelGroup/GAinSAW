@@ -1,0 +1,376 @@
+gainsaw version:  0.1 
+
+... loading existing gainsaw config file  test.gainsaw.conf
+
+***
+  With test05.py we explored the context of query/target points in windows of
+  length 51 centered on the points. After looking at the results, we may want
+  to change the context size or alignment parameters. Using the saved
+  LiftOverPointSet pickle, this is easily done:
+
+    psl = get_lopset("test05")
+    psl.write_alignments()
+
+    qGenomic_fasta = 'mm39'
+    tGenomic_fasta = 'rn7'
+    mycrt = gsparams._replace(qlabel='mm39',tlabel='rn7',slop_size=50)
+    psl.align_seqset(qGenomic_fasta, tGenomic_fasta, mycrt)
+    psl.write_alignments()
+
+  This code loads the saved pickle; writes the previous alignments (with
+  slop_size 25); and generates and displays alignments with slop_size 50.
+***
+
+... loading existing LiftOverPointSet object  test05.lops.pkl
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+
+*** Alignment(s) ***
+33405066_in_chr5:33405041-33405092|chr14:77482795-77482846(query|target)
+Strand = +/-(query|target)
+Score =  92.0
+Fraction of mismatches = 2/51 = 3.9%
+target            0 AAGCCATTAAAGCTGGGGCCAGGCGTGCCGGCTCTTTCTGGGATTTTTATT 51
+                  0 |||||||||||.||||.|||||||||||||||||||||||||||||||||| 51
+query             0 AAGCCATTAAAACTGGTGCCAGGCGTGCCGGCTCTTTCTGGGATTTTTATT 51
+
+
+*** Alignment(s) ***
+33404990_in_chr5:33404965-33405016|chr14:77482871-77482922(query|target)
+Strand = +/-(query|target)
+Score =  2.0
+Fraction of mismatches = 20/51 = 39.2%
+target            0 CCCCAGAAGCTGAGTCAGGCCCTGGAGGTCATGAGAGTTAGGCCCAGAAGG 51
+                  0 |..|...|....||....|....|.||||||||||||.||||.|||||||| 51
+query             0 CTGCTCCACAGAAGATGAGTGGAGCAGGTCATGAGAGCTAGGACCAGAAGG 51
+
+
+*** Alignment(s) ***
+33405260_in_chr5:33405235-33405286|chr14:77482601-77482652(query|target)
+Strand = +/-(query|target)
+Score =  7.0
+Fraction of mismatches = 19/51 = 37.3%
+target            0 CTGAGCACACTGGGCACTGCAGACACACCTCAGAGCCACTCGCGATGCCGT 51
+                  0 ||||||||.|||||||||||||||.|..|..||...|.|..|......|.| 51
+query             0 CTGAGCACCCTGGGCACTGCAGACGCCTCGGAGCCACTCGTGATGCCGCCT 51
+
+
+*** Alignment(s) ***
+33418352_in_chr5:33418327-33418378|chr14:77468882-77468933(query|target)
+Strand = +/-(query|target)
+Score =  67.0
+Fraction of mismatches = 7/51 = 13.7%
+target            0 GAGACAGGGGCTTCAGAGCTCCTACCTAGATCACCAGCTGACTTGATGTCT 51
+                  0 ..||.|.|||||||.|||||||||||||||||.|||||||||||||||||. 51
+query             0 TGGAAACGGGCTTCGGAGCTCCTACCTAGATCCCCAGCTGACTTGATGTCG 51
+
+
+*** Alignment(s) ***
+33418469_in_chr5:33418444-33418495|chr14:77468765-77468816(query|target)
+Strand = +/-(query|target)
+Score =  92.0
+Fraction of mismatches = 2/51 = 3.9%
+target            0 CTGGTCAGTGTGATGGTATGGTACATCAGGGCGCCCACTGCCTCATTCAGT 51
+                  0 ||||||||||||||||||||||||||||||||.|||||.|||||||||||| 51
+query             0 CTGGTCAGTGTGATGGTATGGTACATCAGGGCACCCACAGCCTCATTCAGT 51
+
+
+*** Alignment(s) ***
+33432337_in_chr5:33432312-33432363|chr14:77455540-77455591(query|target)
+Strand = +/-(query|target)
+Score =  102.0
+Fraction of mismatches = 0/51 = 0.0%
+target            0 CCGCGCTCCGACCGACGAGCGGGCGGGGACACGCGGCGCGCGCGCGCGGGC 51
+                  0 ||||||||||||||||||||||||||||||||||||||||||||||||||| 51
+query             0 CCGCGCTCCGACCGACGAGCGGGCGGGGACACGCGGCGCGCGCGCGCGGGC 51
+
+
+*** Alignment(s) ***
+33432082_in_chr5:33432057-33432108|chr14:77455795-77455846(query|target)
+Strand = +/-(query|target)
+Score =  57.0
+Fraction of mismatches = 9/51 = 17.6%
+target            0 CGCGCGCCCGGCCGCCCCGCCCCCGCCCCCCGCCCGCAGCCGGAAATGTGC 51
+                  0 ||..|||||.|||.||.|.||.||.|||||||||||||||||||||||.|| 51
+query             0 CGGCCGCCCCGCCCCCGCCCCTCCACCCCCCGCCCGCAGCCGGAAATGCGC 51
+
+
+*** Alignment(s) ***
+33432672_in_chr5:33432647-33432698|chr14:77455205-77455256(query|target)
+Strand = +/-(query|target)
+Score =  -3.0
+Fraction of mismatches = 21/51 = 41.2%
+target            0 CCGCGGACTCAAGAGGACAGCGAGAGGGTGCACTCGGCCCCTTGTGCGCTG 51
+                  0 |||.||.|||||||||||||||||||.|........|.|||.|........ 51
+query             0 CCGGGGCCTCAAGAGGACAGCGAGAGCGGTTCACTCGGCCCCTTGTGCGCT 51
+
+
+*** Alignment(s) ***
+132589291_in_chr7:132589266-132589317|chr1:187782591-187782642(query|target)
+Strand = +/+(query|target)
+Score =  102.0
+Fraction of mismatches = 0/51 = 0.0%
+target            0 ACAAACAGCTTGTGAAACTTAATACTTTTTTCTTTTGTTCTTTTCCTTTTT 51
+                  0 ||||||||||||||||||||||||||||||||||||||||||||||||||| 51
+query             0 ACAAACAGCTTGTGAAACTTAATACTTTTTTCTTTTGTTCTTTTCCTTTTT 51
+
+
+*** Alignment(s) ***
+132617218_in_chr7:132617193-132617244|chr1:187812063-187812114(query|target)
+Strand = +/+(query|target)
+Score =  97.0
+Fraction of mismatches = 1/51 = 2.0%
+target            0 GGCAGGAGGCTGTGCTCCAGTCTGCTGGGCCCCCTTTCCAGTGGCTGTGCT 51
+                  0 ||||||||||||||||||||.|||||||||||||||||||||||||||||| 51
+query             0 GGCAGGAGGCTGTGCTCCAGCCTGCTGGGCCCCCTTTCCAGTGGCTGTGCT 51
+
+
+*** Alignment(s) ***
+132588896_in_chr7:132588871-132588922|chr1:187782196-187782247(query|target)
+Strand = +/+(query|target)
+Score =  42.0
+Fraction of mismatches = 12/51 = 23.5%
+target            0 TGGGACAGTTTAAAGTTTTTCTTTTGTCACAAAAACAGGAATGTACCTATA 51
+                  0 ....|.|||||....|||.|.||.||||||||||||||||||||||||||| 51
+query             0 GTTTAAAGTTTTTTTTTTCTTTTGTGTCACAAAAACAGGAATGTACCTATA 51
+
+
+*** Alignment(s) ***
+132589350_in_chr7:132589325-132589376|chr1:187782650-187782701(query|target)
+Strand = +/+(query|target)
+Score =  -18.0
+Fraction of mismatches = 24/51 = 47.1%
+target            0 TTTTTTTGTTTGTTTGTTGTTTTTGTTTTGTGTCATCAGAGGGTTTTACTG 51
+                  0 |||||||||||.|||.||.|||||||.|.......|...|..|........ 51
+query             0 TTTTTTTGTTTTTTTTTTTTTTTTGTATCAGAGGGTTTTACTGAACCGACT 51
+
+
+*** Alignment(s) ***
+132617187_in_chr7:132617162-132617213|chr1:187812032-187812083(query|target)
+Strand = +/+(query|target)
+Score =  -13.0
+Fraction of mismatches = 23/51 = 45.1%
+target            0 CGCGAGGTCTGTCCTGTGTGCCTCTAGCCCAGGCAGGAGGCTGTGCTCCAG 51
+                  0 .....|......|............|||||||||||||||||||||||||| 51
+query             0 GCAAGGTCTGTCCTGTGTGCTTCTAAGCCCAGGCAGGAGGCTGTGCTCCAG 51
+
+
+*** Alignment(s) ***
+132617250_in_chr7:132617225-132617276|chr1:187812095-187812146(query|target)
+Strand = +/+(query|target)
+Score =  17.0
+Fraction of mismatches = 17/51 = 33.3%
+target            0 CCTTTCCAGTGGCTGTGCTCACATGGCCCTCAGCTCCTGCAGCGTGAGGAT 51
+                  0 |||||||||||||||||||||||||||||.|....|.......|.|.|... 51
+query             0 CCTTTCCAGTGGCTGTGCTCACATGGCCCCCTCAGCTCTTGCAGCGTGAGG 51
+
+
+
+Showing the default parameters:  parameters(qlabel='unsp', tlabel='unsp', scoring=(-100, -2, 'BLASTN'), slop_size=25, mismatch_rate=10, setpfilter=0, usepfilter=1)
+
+Using slop_size=50 instead ...
+Showing my changed parameters:  parameters(qlabel='mm39', tlabel='rn7', scoring=(-100, -2, 'BLASTN'), slop_size=50, mismatch_rate=10, setpfilter=0, usepfilter=1) 
+
+... loading existing fasta index
+... done
+... loading existing fasta index
+... done
+
+There are  14  set(s) of extended_point sequences: 
+
+*** Alignment(s) ***
+33405066_in_chr5:33405016-33405117|chr14:77482770-77482871(query|target)
+Strand = +/-(query|target)
+Score =  182.0
+Fraction of mismatches = 4/101 = 4.0%
+target            0 GACCCACCAGCGCTCCCACTTGATGAAGCCATTAAAGCTGGGGCCAGGCGTGCCGGCTCT
+                  0 ||||||||||.|||||||.|||||||||||||||||.||||.||||||||||||||||||
+query             0 GACCCACCAGTGCTCCCATTTGATGAAGCCATTAAAACTGGTGCCAGGCGTGCCGGCTCT
+
+target           60 TTCTGGGATTTTTATTTCTTTAAAATAATTCATACAAATGG 101
+                 60 ||||||||||||||||||||||||||||||||||||||||| 101
+query            60 TTCTGGGATTTTTATTTCTTTAAAATAATTCATACAAATGG 101
+
+
+*** Alignment(s) ***
+33404990_in_chr5:33404940-33405041|chr14:77482846-77482947(query|target)
+Strand = +/-(query|target)
+Score =  -8.0
+Fraction of mismatches = 42/101 = 41.6%
+target            0 CTGGGTCTCCCCAGGACTGCCTGCTCCCCAGAAGCTGAGTCAGGCCCTGGAGGTCATGAG
+                  0 ||.........|....|.|......|..|...|....||....|....|.||||||||||
+query             0 CTCTTCTGGGTCTCCCCAGGACTGCCTGCTCCACAGAAGATGAGTGGAGCAGGTCATGAG
+
+target           60 AGTTAGGCCCAGAAGGGACCCACCAGCGCTCCCACTTGATG 101
+                 60 ||.||||.||||||||||||||||||.|||||||.|||||| 101
+query            60 AGCTAGGACCAGAAGGGACCCACCAGTGCTCCCATTTGATG 101
+
+
+*** Alignment(s) ***
+33405260_in_chr5:33405210-33405311|chr14:77482576-77482677(query|target)
+Strand = +/-(query|target)
+Score =  -3.0
+Fraction of mismatches = 41/101 = 40.6%
+target            0 TTCCCCAGGACAGACCCCGATGGTCCTGAGCACACTGGGCACTGCAGACACACCTCAGAG
+                  0 |.|||||||||||||||||.|||||||||||||.|||||||||||||||.|..|..||..
+query             0 TCCCCCAGGACAGACCCCGGTGGTCCTGAGCACCCTGGGCACTGCAGACGCCTCGGAGCC
+
+target           60 CCACTCGCGATGCCGTCTTCATTTGGAACAAGGGGTTCATG 101
+                 60 .|.|..|......|.|...|.|.....|...||........ 101
+query            60 ACTCGTGATGCCGCCTTCACTTGGAACAAGGGGTTCATGCC 101
+
+
+*** Alignment(s) ***
+33418352_in_chr5:33418302-33418403|chr14:77468857-77468958(query|target)
+Strand = +/-(query|target)
+Score =  72.0
+Fraction of mismatches = 26/101 = 25.7%
+target            0 GTTAAATGAGACACCCTGGTAAATGGAGACAGGGGCTTCAGAGCTCCTACCTAGATCACC
+                  0 .......|.||.||.|......|....||.|.|||||||.|||||||||||||||||.||
+query             0 AGGTTCAGTGAGACACCTTGGTAAATGGAAACGGGCTTCGGAGCTCCTACCTAGATCCCC
+
+target           60 AGCTGACTTGATGTCTATGTTGTCAAACCCGCTGCCAATTC 101
+                 60 |||||||||||||||.||.|||||||||||||||||||||| 101
+query            60 AGCTGACTTGATGTCGATATTGTCAAACCCGCTGCCAATTC 101
+
+
+*** Alignment(s) ***
+33418469_in_chr5:33418419-33418520|chr14:77468740-77468841(query|target)
+Strand = +/-(query|target)
+Score =  172.0
+Fraction of mismatches = 6/101 = 5.9%
+target            0 AGCTTTAAACTTCTCCAGATCTTCTCTGGTCAGTGTGATGGTATGGTACATCAGGGCGCC
+                  0 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||.||
+query             0 AGCTTTAAACTTCTCCAGATCTTCTCTGGTCAGTGTGATGGTATGGTACATCAGGGCACC
+
+target           60 CACTGCCTCATTCAGTACCTGCATGGAAGGAAAACAGGTTG 101
+                 60 |||.||||||||||||||||||||.||..|||||||||.|| 101
+query            60 CACAGCCTCATTCAGTACCTGCATTGAGAGAAAACAGGCTG 101
+
+
+*** Alignment(s) ***
+33432337_in_chr5:33432287-33432388|chr14:77455515-77455616(query|target)
+Strand = +/-(query|target)
+Score =  202.0
+Fraction of mismatches = 0/101 = 0.0%
+target            0 TGCCGAGCCGCCACCGCGCCGCCAGCCGCGCTCCGACCGACGAGCGGGCGGGGACACGCG
+                  0 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query             0 TGCCGAGCCGCCACCGCGCCGCCAGCCGCGCTCCGACCGACGAGCGGGCGGGGACACGCG
+
+target           60 GCGCGCGCGCGCGGGCGTGGCCTCGGTTGGTCTGCTGTTTG 101
+                 60 ||||||||||||||||||||||||||||||||||||||||| 101
+query            60 GCGCGCGCGCGCGGGCGTGGCCTCGGTTGGTCTGCTGTTTG 101
+
+
+*** Alignment(s) ***
+33432082_in_chr5:33432032-33432133|chr14:77455770-77455871(query|target)
+Strand = +/-(query|target)
+Score =  62.0
+Fraction of mismatches = 28/101 = 27.7%
+target            0 GCACTCGTACACAAAGCCAGCGCTGCGCGCGCCCGGCCGCCCCGCCCCCGCCCCCCGCCC
+                  0 .|||.....||......|.......||..|||||.|||.||.|.||.||.||||||||||
+query             0 ACACAAAGCCAGCGCCGCGCGCGCCCGGCCGCCCCGCCCCCGCCCCTCCACCCCCCGCCC
+
+target           60 GCAGCCGGAAATGTGCGCGCGCGGCCTTACCCAGCGGCAGG 101
+                 60 |||||||||||||.||||||||||||||||||||||||||| 101
+query            60 GCAGCCGGAAATGCGCGCGCGCGGCCTTACCCAGCGGCAGG 101
+
+
+*** Alignment(s) ***
+33432672_in_chr5:33432622-33432723|chr14:77455180-77455281(query|target)
+Strand = +/-(query|target)
+Score =  -3.0
+Fraction of mismatches = 41/101 = 40.6%
+target            0 GCGTGGGGCGCTACCGGGCTAGTCGCCGCGGACTCAAGAGGACAGCGAGAGGGTGCACTC
+                  0 |||||||||||||||.|.||||||||||.||.|||||||||||||||||||.|.......
+query             0 GCGTGGGGCGCTACCAGTCTAGTCGCCGGGGCCTCAAGAGGACAGCGAGAGCGGTTCACT
+
+target           60 GGCCCCTTGTGCGCTGGAGCTGGGGCCGCGGACCCAGAACG 101
+                 60 .|.|||.|..............|||.|...|..||...... 101
+query            60 CGGCCCCTTGTGCGCTAGAGCTGGGGCCGCGGACCCAGGAC 101
+
+
+*** Alignment(s) ***
+132589291_in_chr7:132589241-132589342|chr1:187782566-187782667(query|target)
+Strand = +/+(query|target)
+Score =  177.0
+Fraction of mismatches = 5/101 = 5.0%
+target            0 TGAAACTGAGAAAATATATTTGAGTACAAACAGCTTGTGAAACTTAATACTTTTTTCTTT
+                  0 ||||||||||||||||.|||||||||||||||||||||||||||||||||||||||||||
+query             0 TGAAACTGAGAAAATAGATTTGAGTACAAACAGCTTGTGAAACTTAATACTTTTTTCTTT
+
+target           60 TGTTCTTTTCCTTTTTTTGTTTTTTTTTTTTGTTTGTTTGT 101
+                 60 ||||||||||||||||||.||||.|||||||||||.|||.| 101
+query            60 TGTTCTTTTCCTTTTTTTTTTTTGTTTTTTTGTTTTTTTTT 101
+
+
+*** Alignment(s) ***
+132617218_in_chr7:132617168-132617269|chr1:187812038-187812139(query|target)
+Strand = +/+(query|target)
+Score =  47.0
+Fraction of mismatches = 31/101 = 30.7%
+target            0 GTCTGTCCTGTGTGCCTCTAGCCCAGGCAGGAGGCTGTGCTCCAGTCTGCTGGGCCCCCT
+                  0 ......|............||||||||||||||||||||||||||.||||||||||||||
+query             0 TCTGTCCTGTGTGCTTCTAAGCCCAGGCAGGAGGCTGTGCTCCAGCCTGCTGGGCCCCCT
+
+target           60 TTCCAGTGGCTGTGCTCACATGGCCCTCAGCTCCTGCAGCG 101
+                 60 ||||||||||||||||||||||||||.|....|.......| 101
+query            60 TTCCAGTGGCTGTGCTCACATGGCCCCCTCAGCTCTTGCAG 101
+
+
+*** Alignment(s) ***
+132588896_in_chr7:132588846-132588947|chr1:187782171-187782272(query|target)
+Strand = +/+(query|target)
+Score =  42.0
+Fraction of mismatches = 32/101 = 31.7%
+target            0 CTTCTGATAGCCATTATTTTCTGTTTGGGACAGTTTAAAGTTTTTCTTTTGTCACAAAAA
+                  0 ...|..........|.|||..........|.|||||....|||.|.||.|||||||||||
+query             0 AGCCATTATTTTTCTGTTTGGGACAGTTTAAAGTTTTTTTTTTCTTTTGTGTCACAAAAA
+
+target           60 CAGGAATGTACCTATACAAAGGCTCAAAATAGGCCATCTTT 101
+                 60 ||||||||||||||||||||||||||||||||||||||||| 101
+query            60 CAGGAATGTACCTATACAAAGGCTCAAAATAGGCCATCTTT 101
+
+
+*** Alignment(s) ***
+132589350_in_chr7:132589300-132589401|chr1:187782625-187782726(query|target)
+Strand = +/+(query|target)
+Score =  -33.0
+Fraction of mismatches = 47/101 = 46.5%
+target            0 TTGTTCTTTTCCTTTTTTTGTTTTTTTTTTTTGTTTGTTTGTTGTTTTTGTTTTGTGTCA
+                  0 |||||||||||||||||||.||||.|||||||||||.|||.||.|||||||.|.......
+query             0 TTGTTCTTTTCCTTTTTTTTTTTTGTTTTTTTGTTTTTTTTTTTTTTTTGTATCAGAGGG
+
+target           60 TCAGAGGGTTTTACTGAACTCACAACCGACTTTGCTGCTCA 101
+                 60 |...|..|..............|.......|.......||. 101
+query            60 TTTTACTGAACCGACTCTGCTGCTCAGATGTGAAACCTTCT 101
+
+
+*** Alignment(s) ***
+132617187_in_chr7:132617137-132617238|chr1:187812007-187812108(query|target)
+Strand = +/+(query|target)
+Score =  7.0
+Fraction of mismatches = 39/101 = 38.6%
+target            0 TTTGCCTCACTCCCCAATGGTAGCCCGCGAGGTCTGTCCTGTGTGCCTCTAGCCCAGGCA
+                  0 ||..|......|||.|..|....||.....|......|............||||||||||
+query             0 TTGCCTCACTCCCCAATGGTAGCCCGCAAGGTCTGTCCTGTGTGCTTCTAAGCCCAGGCA
+
+target           60 GGAGGCTGTGCTCCAGTCTGCTGGGCCCCCTTTCCAGTGGC 101
+                 60 ||||||||||||||||.|||||||||||||||||||||||| 101
+query            60 GGAGGCTGTGCTCCAGCCTGCTGGGCCCCCTTTCCAGTGGC 101
+
+
+*** Alignment(s) ***
+132617250_in_chr7:132617200-132617301|chr1:187812070-187812171(query|target)
+Strand = +/+(query|target)
+Score =  27.0
+Fraction of mismatches = 35/101 = 34.7%
+target            0 GGCTGTGCTCCAGTCTGCTGGGCCCCCTTTCCAGTGGCTGTGCTCACATGGCCCTCAGCT
+                  0 |||||||||||||.||||||||||||||||||||||||||||||||||||||||.|....
+query             0 GGCTGTGCTCCAGCCTGCTGGGCCCCCTTTCCAGTGGCTGTGCTCACATGGCCCCCTCAG
+
+target           60 CCTGCAGCGTGAGGATTAGGAGCTAAATAAAACCCCTAAAG 101
+                 60 |.......|.|.|........|....|.|.||..||...|. 101
+query            60 CTCTTGCAGCGTGAGGATTAGGAGCTAAATAAAACCCCTAA 101
+

@@ -1,0 +1,302 @@
+gainsaw version:  0.1 
+
+... loading existing gainsaw config file  test.gainsaw.conf
+
+***
+  First, we load the pickle mm39_rn7_randomSNPs4ann.lops.pkl generated in
+  test07.py. Then we use pybedtools functionality to interset the point
+  intervals with genome features read from the requisite genome annotation bed
+  files. The output shows the data structures generated to classify the SNPs
+  with respect to overlap with genome features, e.g. CDS, introns, or RNA genes.
+
+    ps = get_lopset("mm39_rn7_randomSNPs4ann")
+    gbed_file = "../data/genomes/mm39/mm39.tidyann.bed"
+    qgann = BedWrap(gbed_file)
+    gbed_file = "../data/genomes/rn7/rn7.tidyann.bed"
+    tgann = BedWrap(gbed_file)
+    ps.annotate_lopset(qgann.bed, tgann.bed)
+
+  Finally, we put all the derived data into a data frame and illustrate how
+  useful that is for analyses. Note, the case of a query pseudogene point mapped 
+  to a target CDS, as well as the non-conservation of lncRNA annotations.
+
+    ps.create_annotation_dataframe()
+    ps.write_annotation_dataframe()
+    ps.df.qftype = ps.df.qftype.apply(lambda l: '/'.join(i for i in l))
+    ps.df.tftype = ps.df.tftype.apply(lambda l: '/'.join(i for i in l))
+    pd.crosstab(ps.df.qftype,ps.df.tftype, margins=True, margins_name="Total")
+
+  The following command saves the data frame as a pickle:
+    ps.pickle_annotation_dataframe("test08a")
+***
+
+... loading annotation file ./../data/genomes/mm39/mm39.tidyann.bed
+... loading annotation file ./../data/genomes/rn7/rn7.tidyann.bed
+... loading existing LiftOverPointSet object  mm39_rn7_randomSNPs4ann.lops.pkl
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+[(136751562, 'chr7', 191959483, 'chr1', '+', 136751561, 136751824, 191959482, 191959745, '6', 5462046663, [1])]
+[(65894314, 'chr7', 119827063, 'chr1', '+', 65894236, 65894318, 119826985, 119827067, '6', 5462046663, [1])]
+[]
+[(39963758, 'chr7', 91990478, 'chr1', '+', 39963738, 39963970, 91990458, 91990690, '6', 5462046663, [1])]
+[(133391027, 'chr5', 23322647, 'chr12', '-', 133390823, 133391048, 23322627, 23322852, '20', 1972859541, [1])]
+[(128467487, 'chr5', 28315691, 'chr12', '-', 128467432, 128467559, 28315620, 28315747, '20', 1972859541, [1])]
+[(7509189, 'chr7', 70572481, 'chr1', '-', 7509128, 7509193, 70572478, 70572543, '292', 272922, [1])]
+[(147546894, 'chr5', 7418262, 'chr12', '-', 147546826, 147546895, 7418262, 7418331, '20', 1972859541, [1])]
+[]
+[(77448472, 'chr7', 131702764, 'chr1', '+', 77448386, 77448515, 131702678, 131702807, '6', 5462046663, [1])]
+[]
+[]
+[(12180119, 'chr5', 22776476, 'chr4', '-', 12180057, 12180157, 22776439, 22776539, '29', 993018144, [1])]
+[(10015459, 'chr7', 64833880, 'chr1', '-', 10015184, 10015611, 64833729, 64834156, '44917', 251490, [1])]
+[(88735976, 'chr7', 142953708, 'chr1', '+', 88735865, 88736012, 142953597, 142953744, '6', 5462046663, [1])]
+[(141411229, 'chr5', 13185983, 'chr12', '-', 141411192, 141411231, 13185982, 13186021, '20', 1972859541, [1])]
+[]
+[(29076176, 'chr7', 84677829, 'chr1', '+', 29076123, 29076239, 84677776, 84677892, '6', 5462046663, [1])]
+[]
+[]
+[(32924223, 'chr5', 77962419, 'chr14', '-', 32924080, 32924340, 77962303, 77962563, '14', 3196286296, [1])]
+[(76782926, 'chr7', 130961760, 'chr1', '+', 76782900, 76782936, 130961734, 130961770, '6', 5462046663, [1])]
+[]
+[]
+[]
+[(132527310, 'chr7', 187710217, 'chr1', '+', 132527256, 132527489, 187710163, 187710396, '6', 5462046663, [1])]
+[(35312608, 'chr7', 88278348, 'chr1', '+', 35312526, 35312667, 88278266, 88278407, '6', 5462046663, [1])]
+[(121274160, 'chr5', 35419422, 'chr12', '-', 121274157, 121274169, 35419414, 35419426, '20', 1972859541, [1])]
+[(110601296, 'chr7', 165113594, 'chr1', '+', 110601252, 110601331, 165113550, 165113629, '6', 5462046663, [1])]
+[(42946122, 'chr7', 93708042, 'chr1', '+', 42946071, 42946134, 93707991, 93708054, '6', 5462046663, [1])]
+[(67484997, 'chr5', 40842521, 'chr14', '-', 67484965, 67485172, 40842347, 40842554, '14', 3196286296, [1])]
+[(61462094, 'chr5', 48653759, 'chr14', '-', 61461362, 61462156, 48653698, 48654492, '14', 3196286296, [1])]
+[(98130668, 'chr5', 11579009, 'chr14', '-', 98130659, 98130757, 11578921, 11579019, '14', 3196286296, [1])]
+[(78234440, 'chr5', 30101351, 'chr14', '-', 78234375, 78234483, 30101309, 30101417, '14', 3196286296, [1])]
+[]
+[(28918809, 'chr5', 6707361, 'chr4', '-', 28918809, 28918819, 6707352, 6707362, '29', 993018144, [1])]
+[(110180418, 'chr7', 164679937, 'chr1', '+', 110180331, 110180441, 164679850, 164679960, '6', 5462046663, [1])]
+[(142238093, 'chr7', 197849156, 'chr1', '+', 142238091, 142238405, 197849154, 197849468, '6', 5462046663, [1])]
+[(97567537, 'chr7', 152231821, 'chr1', '+', 97567442, 97567660, 152231726, 152231944, '6', 5462046663, [1])]
+[(82414986, 'chr7', 136751762, 'chr1', '+', 82414980, 82415162, 136751756, 136751938, '6', 5462046663, [1])]
+[(19860711, 'chr5', 15441959, 'chr4', '-', 19860708, 19860712, 15441959, 15441963, '29', 993018144, [1])]
+[(144130704, 'chr7', 199739657, 'chr1', '+', 144130671, 144130758, 199739624, 199739711, '6', 5462046663, [1])]
+[(15071689, 'chr5', 19647490, 'chr4', '-', 15071645, 15071796, 19647384, 19647535, '8650', 80904, [1])]
+[(100389604, 'chr7', 155091863, 'chr1', '+', 100389554, 100389690, 155091813, 155091949, '6', 5462046663, [1])]
+[(128647864, 'chr7', 183613336, 'chr1', '+', 128647785, 128647915, 183613257, 183613387, '6', 5462046663, [1])]
+[(24604402, 'chr7', 80501035, 'chr1', '+', 24604396, 24604434, 80501029, 80501067, '6', 5462046663, [1])]
+[]
+[(134903814, 'chr5', 21826522, 'chr12', '-', 134903777, 134903825, 21826512, 21826560, '20', 1972859541, [1])]
+[(68329355, 'chr5', 39998440, 'chr14', '-', 68329259, 68329373, 39998423, 39998537, '14', 3196286296, [1])]
+[]
+
+
+CHECK: Query index:
+
+{'mm39_chr7_136751562+': ['rn7_chr1_191959483+'], 'mm39_chr7_65894314+': ['rn7_chr1_119827063+'], 'mm39_chr7_39963758+': ['rn7_chr1_91990478+'], 'mm39_chr5_133391027+': ['rn7_chr12_23322647-'], 'mm39_chr5_128467487+': ['rn7_chr12_28315691-'], 'mm39_chr7_7509189+': ['rn7_chr1_70572481-'], 'mm39_chr5_147546894+': ['rn7_chr12_7418262-'], 'mm39_chr7_77448472+': ['rn7_chr1_131702764+'], 'mm39_chr5_12180119+': ['rn7_chr4_22776476-'], 'mm39_chr7_10015459+': ['rn7_chr1_64833880-'], 'mm39_chr7_88735976+': ['rn7_chr1_142953708+'], 'mm39_chr5_141411229+': ['rn7_chr12_13185983-'], 'mm39_chr7_29076176+': ['rn7_chr1_84677829+'], 'mm39_chr5_32924223+': ['rn7_chr14_77962419-'], 'mm39_chr7_76782926+': ['rn7_chr1_130961760+'], 'mm39_chr7_132527310+': ['rn7_chr1_187710217+'], 'mm39_chr7_35312608+': ['rn7_chr1_88278348+'], 'mm39_chr5_121274160+': ['rn7_chr12_35419422-'], 'mm39_chr7_110601296+': ['rn7_chr1_165113594+'], 'mm39_chr7_42946122+': ['rn7_chr1_93708042+'], 'mm39_chr5_67484997+': ['rn7_chr14_40842521-'], 'mm39_chr5_61462094+': ['rn7_chr14_48653759-'], 'mm39_chr5_98130668+': ['rn7_chr14_11579009-'], 'mm39_chr5_78234440+': ['rn7_chr14_30101351-'], 'mm39_chr5_28918809+': ['rn7_chr4_6707361-'], 'mm39_chr7_110180418+': ['rn7_chr1_164679937+'], 'mm39_chr7_142238093+': ['rn7_chr1_197849156+'], 'mm39_chr7_97567537+': ['rn7_chr1_152231821+'], 'mm39_chr7_82414986+': ['rn7_chr1_136751762+'], 'mm39_chr5_19860711+': ['rn7_chr4_15441959-'], 'mm39_chr7_144130704+': ['rn7_chr1_199739657+'], 'mm39_chr5_15071689+': ['rn7_chr4_19647490-'], 'mm39_chr7_100389604+': ['rn7_chr1_155091863+'], 'mm39_chr7_128647864+': ['rn7_chr1_183613336+'], 'mm39_chr7_24604402+': ['rn7_chr1_80501035+'], 'mm39_chr5_134903814+': ['rn7_chr12_21826522-'], 'mm39_chr5_68329355+': ['rn7_chr14_39998440-']}
+
+
+CHECK: Target index:
+
+{'rn7_chr1_191959483+': ['mm39_chr7_136751562+'], 'rn7_chr1_119827063+': ['mm39_chr7_65894314+'], 'rn7_chr1_91990478+': ['mm39_chr7_39963758+'], 'rn7_chr12_23322647-': ['mm39_chr5_133391027+'], 'rn7_chr12_28315691-': ['mm39_chr5_128467487+'], 'rn7_chr1_70572481-': ['mm39_chr7_7509189+'], 'rn7_chr12_7418262-': ['mm39_chr5_147546894+'], 'rn7_chr1_131702764+': ['mm39_chr7_77448472+'], 'rn7_chr4_22776476-': ['mm39_chr5_12180119+'], 'rn7_chr1_64833880-': ['mm39_chr7_10015459+'], 'rn7_chr1_142953708+': ['mm39_chr7_88735976+'], 'rn7_chr12_13185983-': ['mm39_chr5_141411229+'], 'rn7_chr1_84677829+': ['mm39_chr7_29076176+'], 'rn7_chr14_77962419-': ['mm39_chr5_32924223+'], 'rn7_chr1_130961760+': ['mm39_chr7_76782926+'], 'rn7_chr1_187710217+': ['mm39_chr7_132527310+'], 'rn7_chr1_88278348+': ['mm39_chr7_35312608+'], 'rn7_chr12_35419422-': ['mm39_chr5_121274160+'], 'rn7_chr1_165113594+': ['mm39_chr7_110601296+'], 'rn7_chr1_93708042+': ['mm39_chr7_42946122+'], 'rn7_chr14_40842521-': ['mm39_chr5_67484997+'], 'rn7_chr14_48653759-': ['mm39_chr5_61462094+'], 'rn7_chr14_11579009-': ['mm39_chr5_98130668+'], 'rn7_chr14_30101351-': ['mm39_chr5_78234440+'], 'rn7_chr4_6707361-': ['mm39_chr5_28918809+'], 'rn7_chr1_164679937+': ['mm39_chr7_110180418+'], 'rn7_chr1_197849156+': ['mm39_chr7_142238093+'], 'rn7_chr1_152231821+': ['mm39_chr7_97567537+'], 'rn7_chr1_136751762+': ['mm39_chr7_82414986+'], 'rn7_chr4_15441959-': ['mm39_chr5_19860711+'], 'rn7_chr1_199739657+': ['mm39_chr7_144130704+'], 'rn7_chr4_19647490-': ['mm39_chr5_15071689+'], 'rn7_chr1_155091863+': ['mm39_chr7_100389604+'], 'rn7_chr1_183613336+': ['mm39_chr7_128647864+'], 'rn7_chr1_80501035+': ['mm39_chr7_24604402+'], 'rn7_chr12_21826522-': ['mm39_chr5_134903814+'], 'rn7_chr14_39998440-': ['mm39_chr5_68329355+']}
+... now extracting genomic features from the annotation files
+
+Current date and time entering annotate_lopset    : 2023-10-18 11:41:16
+Current date and time done with qfeature_intervals: 2023-10-18 11:41:33
+Current date and time done with qbed intersection : 2023-10-18 11:41:33
+Current date and time done with qfeatures         : 2023-10-18 11:41:34
+Current date and time done with ubed intersection : 2023-10-18 11:41:34
+Current date and time done with ufeatures         : 2023-10-18 11:41:34
+Current date and time done with feature_intervals : 2023-10-18 11:41:49
+Current date and time done with tbed intersection : 2023-10-18 11:41:49
+Current date and time done with tfeatures         : 2023-10-18 11:41:49
+
+
+CHECK: Query ftype:
+
+{'mm39_chr5_12180119+': ['intergenic'], 'mm39_chr5_15071689+': ['intergenic'], 'mm39_chr5_19860711+': ['RNA', 'intron'], 'mm39_chr5_28918809+': ['RNA'], 'mm39_chr5_32924223+': ['intron'], 'mm39_chr5_61462094+': ['intergenic'], 'mm39_chr5_67484997+': ['intron'], 'mm39_chr5_68329355+': ['intergenic'], 'mm39_chr5_78234440+': ['intergenic'], 'mm39_chr5_98130668+': ['intron'], 'mm39_chr5_121274160+': ['intron'], 'mm39_chr5_128467487+': ['intron'], 'mm39_chr5_133391027+': ['intergenic'], 'mm39_chr5_134903814+': ['intergenic'], 'mm39_chr5_141411229+': ['intron'], 'mm39_chr5_147546894+': ['intron'], 'mm39_chr7_7509189+': ['pseudogene'], 'mm39_chr7_10015459+': ['pseudogene'], 'mm39_chr7_24604402+': ['intron'], 'mm39_chr7_29076176+': ['intron'], 'mm39_chr7_35312608+': ['intron'], 'mm39_chr7_39963758+': ['intergenic'], 'mm39_chr7_42946122+': ['three_prime_UTR'], 'mm39_chr7_65894314+': ['intergenic'], 'mm39_chr7_76782926+': ['intergenic'], 'mm39_chr7_77448472+': ['intergenic'], 'mm39_chr7_82414986+': ['intron'], 'mm39_chr7_88735976+': ['intergenic'], 'mm39_chr7_97567537+': ['intergenic'], 'mm39_chr7_100389604+': ['intron'], 'mm39_chr7_110180418+': ['RNA', 'intron'], 'mm39_chr7_110601296+': ['intergenic'], 'mm39_chr7_128647864+': ['intergenic'], 'mm39_chr7_132527310+': ['RNA'], 'mm39_chr7_136751562+': ['RNA'], 'mm39_chr7_142238093+': ['intergenic'], 'mm39_chr7_144130704+': ['intergenic']}
+
+
+CHECK: Unlifted query ftype:
+
+{'mm39_chr5_5904994+': ['intergenic'], 'mm39_chr5_17562626+': ['intergenic'], 'mm39_chr5_28114789+': ['intergenic'], 'mm39_chr5_52491704+': ['intergenic'], 'mm39_chr5_72674613+': ['intron'], 'mm39_chr5_80795494+': ['intergenic'], 'mm39_chr5_130506260+': ['intron'], 'mm39_chr5_151407248+': ['intergenic'], 'mm39_chr7_10033162+': ['intergenic'], 'mm39_chr7_11025594+': ['intergenic'], 'mm39_chr7_11556693+': ['intergenic'], 'mm39_chr7_14720772+': ['intergenic'], 'mm39_chr7_101264597+': ['intergenic']}
+
+
+CHECK: Target ftype:
+
+{'rn7_chr1_64833880-': ['CDS'], 'rn7_chr1_70572481-': ['pseudogene'], 'rn7_chr1_80501035+': ['intron'], 'rn7_chr1_84677829+': ['intron'], 'rn7_chr1_88278348+': ['intron'], 'rn7_chr1_91990478+': ['RNA'], 'rn7_chr1_93708042+': ['three_prime_UTR'], 'rn7_chr1_119827063+': ['RNA'], 'rn7_chr1_130961760+': ['intergenic'], 'rn7_chr1_131702764+': ['intergenic'], 'rn7_chr1_136751762+': ['intron'], 'rn7_chr1_142953708+': ['intergenic'], 'rn7_chr1_152231821+': ['intergenic'], 'rn7_chr1_155091863+': ['intron'], 'rn7_chr1_164679937+': ['intron'], 'rn7_chr1_165113594+': ['intergenic'], 'rn7_chr1_183613336+': ['intergenic'], 'rn7_chr1_187710217+': ['intergenic'], 'rn7_chr1_191959483+': ['intergenic'], 'rn7_chr1_197849156+': ['intron'], 'rn7_chr1_199739657+': ['intergenic'], 'rn7_chr12_7418262-': ['intron'], 'rn7_chr12_13185983-': ['intron'], 'rn7_chr12_21826522-': ['intergenic'], 'rn7_chr12_23322647-': ['intergenic'], 'rn7_chr12_28315691-': ['RNA', 'intron'], 'rn7_chr12_35419422-': ['intron'], 'rn7_chr14_11579009-': ['intron'], 'rn7_chr14_30101351-': ['intergenic'], 'rn7_chr14_39998440-': ['intergenic'], 'rn7_chr14_40842521-': ['intron'], 'rn7_chr14_48653759-': ['intergenic'], 'rn7_chr14_77962419-': ['intron'], 'rn7_chr4_6707361-': ['intergenic'], 'rn7_chr4_15441959-': ['intron'], 'rn7_chr4_19647490-': ['intergenic'], 'rn7_chr4_22776476-': ['intergenic']}
+
+
+CHECK: Query annotation:
+
+{'mm39_chr5_12180119+': [], 'mm39_chr5_15071689+': [], 'mm39_chr5_19860711+': [['chr5', '19838886', '19950531', '-', 'lnc_RNA', 'Gm52766'], ['chr5', '19432587', '19883650', '+', 'intron', 'Magi2']], 'mm39_chr5_28918809+': [['chr5', '28671981', '28924207', '+', 'lnc_RNA', '9530036O11Rik']], 'mm39_chr5_32924223+': [['chr5', '32922292', '32931739', '-', 'intron', 'Pisd']], 'mm39_chr5_61462094+': [], 'mm39_chr5_67484997+': [['chr5', '67484295', '67485040', '+', 'intron', 'Slc30a9']], 'mm39_chr5_68329355+': [], 'mm39_chr5_78234440+': [], 'mm39_chr5_98130668+': [['chr5', '98127893', '98151085', '-', 'intron', 'Antxr2']], 'mm39_chr5_121274160+': [['chr5', '121272889', '121275479', '-', 'intron', 'Ptpn11']], 'mm39_chr5_128467487+': [['chr5', '128346441', '128509349', '-', 'intron', 'Tmem132d']], 'mm39_chr5_133391027+': [], 'mm39_chr5_134903814+': [], 'mm39_chr5_141411229+': [['chr5', '141227847', '141568047', '+', 'intron', 'Sdk1']], 'mm39_chr5_147546894+': [['chr5', '147540436', '147551938', '-', 'intron', 'Flt1']], 'mm39_chr7_7509189+': [['chr7', '7496980', '7509911', '-', 'pseudogene', 'Gm3563']], 'mm39_chr7_10015459+': [['chr7', '10014739', '10015664', '-', 'pseudogene', 'Vmn1r-ps47']], 'mm39_chr7_24604402+': [['chr7', '24602553', '24607140', '+', 'intron', 'Arhgef1']], 'mm39_chr7_29076176+': [['chr7', '29070664', '29076920', '-', 'intron', 'Sipa1l3']], 'mm39_chr7_35312608+': [['chr7', '35311980', '35313879', '+', 'intron', 'Ankrd27']], 'mm39_chr7_39963758+': [], 'mm39_chr7_42946122+': [['chr7', '42945945', '42947297', '-', 'three_prime_UTR', 'Zfp715']], 'mm39_chr7_65894314+': [], 'mm39_chr7_76782926+': [], 'mm39_chr7_77448472+': [], 'mm39_chr7_82414986+': [['chr7', '82412622', '82421664', '+', 'intron', 'Efl1']], 'mm39_chr7_88735976+': [], 'mm39_chr7_97567537+': [], 'mm39_chr7_100389604+': [['chr7', '100356100', '100436010', '+', 'intron', 'Fam168a']], 'mm39_chr7_110180418+': [['chr7', '110170276', '110205148', '-', 'lnc_RNA', 'Gm46027'], ['chr7', '110159550', '110213913', '-', 'intron', 'Sbf2']], 'mm39_chr7_110601296+': [], 'mm39_chr7_128647864+': [], 'mm39_chr7_132527310+': [['chr7', '132476342', '132535739', '-', 'lnc_RNA', '1500002F19Rik']], 'mm39_chr7_136751562+': [['chr7', '136747542', '136753610', '+', 'lnc_RNA', 'Gm30061']], 'mm39_chr7_142238093+': [], 'mm39_chr7_144130704+': []}
+
+
+CHECK: Unlifted query annotation:
+
+{'mm39_chr5_5904994+': [], 'mm39_chr5_17562626+': [], 'mm39_chr5_28114789+': [], 'mm39_chr5_52491704+': [], 'mm39_chr5_72674613+': [['chr5', '72674455', '72675537', '-', 'intron', 'Nfxl1']], 'mm39_chr5_80795494+': [], 'mm39_chr5_130506260+': [['chr5', '130443787', '130534904', '+', 'intron', 'Caln1']], 'mm39_chr5_151407248+': [], 'mm39_chr7_10033162+': [], 'mm39_chr7_11025594+': [], 'mm39_chr7_11556693+': [], 'mm39_chr7_14720772+': [], 'mm39_chr7_101264597+': []}
+
+
+CHECK: Target annotation:
+
+{'rn7_chr1_64833880-': [['chr1', '64833691', '64834624', '+', 'CDS', 'Vom1r28']], 'rn7_chr1_70572481-': [['chr1', '70571815', '70576977', '+', 'pseudogene', 'Vom2r-ps49']], 'rn7_chr1_80501035+': [['chr1', '80499207', '80503711', '+', 'intron', 'Arhgef1']], 'rn7_chr1_84677829+': [['chr1', '84672717', '84678561', '-', 'intron', 'Sipa1l3']], 'rn7_chr1_88278348+': [['chr1', '88277733', '88279421', '+', 'intron', 'Ankrd27']], 'rn7_chr1_91990478+': [['chr1', '91982400', '92028239', '+', 'lnc_RNA', 'LOC102548815']], 'rn7_chr1_93708042+': [['chr1', '93706004', '93709255', '-', 'three_prime_UTR', 'Zfp715']], 'rn7_chr1_119827063+': [['chr1', '119804730', '119844038', '+', 'lnc_RNA', 'LOC102549616']], 'rn7_chr1_130961760+': [], 'rn7_chr1_131702764+': [], 'rn7_chr1_136751762+': [['chr1', '136749367', '136758166', '+', 'intron', 'Efl1']], 'rn7_chr1_142953708+': [], 'rn7_chr1_152231821+': [], 'rn7_chr1_155091863+': [['chr1', '155057563', '155142248', '+', 'intron', 'Fam168a']], 'rn7_chr1_164679937+': [['chr1', '164657906', '164719664', '-', 'intron', 'Sbf2']], 'rn7_chr1_165113594+': [], 'rn7_chr1_183613336+': [], 'rn7_chr1_187710217+': [], 'rn7_chr1_191959483+': [], 'rn7_chr1_197849156+': [['chr1', '197848354', '197863611', '-', 'intron', 'Ins2']], 'rn7_chr1_199739657+': [], 'rn7_chr12_7418262-': [['chr12', '7413762', '7423255', '+', 'intron', 'Flt1']], 'rn7_chr12_13185983-': [['chr12', '13021502', '13363345', '-', 'intron', 'Sdk1']], 'rn7_chr12_21826522-': [], 'rn7_chr12_23322647-': [], 'rn7_chr12_28315691-': [['chr12', '28309240', '28329042', '+', 'lnc_RNA', 'LOC120095943'], ['chr12', '28270829', '28560668', '+', 'intron', 'Tmem132d']], 'rn7_chr12_35419422-': [['chr12', '35418316', '35420700', '+', 'intron', 'Ptpn11']], 'rn7_chr14_11579009-': [['chr14', '11564041', '11581837', '+', 'intron', 'Antxr2']], 'rn7_chr14_30101351-': [], 'rn7_chr14_39998440-': [], 'rn7_chr14_40842521-': [['chr14', '40842479', '40843405', '-', 'intron', 'Slc30a9']], 'rn7_chr14_48653759-': [], 'rn7_chr14_77962419-': [['chr14', '77955505', '77964485', '+', 'intron', 'Pisd']], 'rn7_chr4_6707361-': [], 'rn7_chr4_15441959-': [['chr4', '15407487', '15869600', '-', 'intron', 'Magi2']], 'rn7_chr4_19647490-': [], 'rn7_chr4_22776476-': []}
+
+
+CHECK: qfeatures:
+
+Query point	mm39_chr5_12180119+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_15071689+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_19860711+	overlaps feature	('RNA', 'intron')	(['chr5', '19838886', '19950531', '-', 'lnc_RNA', 'Gm52766'], ['chr5', '19432587', '19883650', '+', 'intron', 'Magi2'])
+Query point	mm39_chr5_28918809+	overlaps feature	['RNA']	[['chr5', '28671981', '28924207', '+', 'lnc_RNA', '9530036O11Rik']]
+Query point	mm39_chr5_32924223+	overlaps feature	['intron']	[['chr5', '32922292', '32931739', '-', 'intron', 'Pisd']]
+Query point	mm39_chr5_61462094+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_67484997+	overlaps feature	['intron']	[['chr5', '67484295', '67485040', '+', 'intron', 'Slc30a9']]
+Query point	mm39_chr5_68329355+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_78234440+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_98130668+	overlaps feature	['intron']	[['chr5', '98127893', '98151085', '-', 'intron', 'Antxr2']]
+Query point	mm39_chr5_121274160+	overlaps feature	['intron']	[['chr5', '121272889', '121275479', '-', 'intron', 'Ptpn11']]
+Query point	mm39_chr5_128467487+	overlaps feature	['intron']	[['chr5', '128346441', '128509349', '-', 'intron', 'Tmem132d']]
+Query point	mm39_chr5_133391027+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_134903814+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_141411229+	overlaps feature	['intron']	[['chr5', '141227847', '141568047', '+', 'intron', 'Sdk1']]
+Query point	mm39_chr5_147546894+	overlaps feature	['intron']	[['chr5', '147540436', '147551938', '-', 'intron', 'Flt1']]
+Query point	mm39_chr7_7509189+	overlaps feature	['pseudogene']	[['chr7', '7496980', '7509911', '-', 'pseudogene', 'Gm3563']]
+Query point	mm39_chr7_10015459+	overlaps feature	['pseudogene']	[['chr7', '10014739', '10015664', '-', 'pseudogene', 'Vmn1r-ps47']]
+Query point	mm39_chr7_24604402+	overlaps feature	['intron']	[['chr7', '24602553', '24607140', '+', 'intron', 'Arhgef1']]
+Query point	mm39_chr7_29076176+	overlaps feature	['intron']	[['chr7', '29070664', '29076920', '-', 'intron', 'Sipa1l3']]
+Query point	mm39_chr7_35312608+	overlaps feature	['intron']	[['chr7', '35311980', '35313879', '+', 'intron', 'Ankrd27']]
+Query point	mm39_chr7_39963758+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_42946122+	overlaps feature	['three_prime_UTR']	[['chr7', '42945945', '42947297', '-', 'three_prime_UTR', 'Zfp715']]
+Query point	mm39_chr7_65894314+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_76782926+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_77448472+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_82414986+	overlaps feature	['intron']	[['chr7', '82412622', '82421664', '+', 'intron', 'Efl1']]
+Query point	mm39_chr7_88735976+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_97567537+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_100389604+	overlaps feature	['intron']	[['chr7', '100356100', '100436010', '+', 'intron', 'Fam168a']]
+Query point	mm39_chr7_110180418+	overlaps feature	('RNA', 'intron')	(['chr7', '110170276', '110205148', '-', 'lnc_RNA', 'Gm46027'], ['chr7', '110159550', '110213913', '-', 'intron', 'Sbf2'])
+Query point	mm39_chr7_110601296+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_128647864+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_132527310+	overlaps feature	['RNA']	[['chr7', '132476342', '132535739', '-', 'lnc_RNA', '1500002F19Rik']]
+Query point	mm39_chr7_136751562+	overlaps feature	['RNA']	[['chr7', '136747542', '136753610', '+', 'lnc_RNA', 'Gm30061']]
+Query point	mm39_chr7_142238093+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_144130704+	overlaps feature	['intergenic']	[]
+
+
+CHECK: ufeatures:
+
+Unlifted query point	mm39_chr5_5904994+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_17562626+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_28114789+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_52491704+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_72674613+	overlaps feature	['intron']	[['chr5', '72674455', '72675537', '-', 'intron', 'Nfxl1']]
+Unlifted query point	mm39_chr5_80795494+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_130506260+	overlaps feature	['intron']	[['chr5', '130443787', '130534904', '+', 'intron', 'Caln1']]
+Unlifted query point	mm39_chr5_151407248+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_10033162+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_11025594+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_11556693+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_14720772+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_101264597+	overlaps feature	['intergenic']	[]
+
+
+CHECK: tfeatures:
+
+Target point	rn7_chr1_64833880-	overlaps feature	['CDS']	[['chr1', '64833691', '64834624', '+', 'CDS', 'Vom1r28']]
+Target point	rn7_chr1_70572481-	overlaps feature	['pseudogene']	[['chr1', '70571815', '70576977', '+', 'pseudogene', 'Vom2r-ps49']]
+Target point	rn7_chr1_80501035+	overlaps feature	['intron']	[['chr1', '80499207', '80503711', '+', 'intron', 'Arhgef1']]
+Target point	rn7_chr1_84677829+	overlaps feature	['intron']	[['chr1', '84672717', '84678561', '-', 'intron', 'Sipa1l3']]
+Target point	rn7_chr1_88278348+	overlaps feature	['intron']	[['chr1', '88277733', '88279421', '+', 'intron', 'Ankrd27']]
+Target point	rn7_chr1_91990478+	overlaps feature	['RNA']	[['chr1', '91982400', '92028239', '+', 'lnc_RNA', 'LOC102548815']]
+Target point	rn7_chr1_93708042+	overlaps feature	['three_prime_UTR']	[['chr1', '93706004', '93709255', '-', 'three_prime_UTR', 'Zfp715']]
+Target point	rn7_chr1_119827063+	overlaps feature	['RNA']	[['chr1', '119804730', '119844038', '+', 'lnc_RNA', 'LOC102549616']]
+Target point	rn7_chr1_130961760+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_131702764+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_136751762+	overlaps feature	['intron']	[['chr1', '136749367', '136758166', '+', 'intron', 'Efl1']]
+Target point	rn7_chr1_142953708+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_152231821+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_155091863+	overlaps feature	['intron']	[['chr1', '155057563', '155142248', '+', 'intron', 'Fam168a']]
+Target point	rn7_chr1_164679937+	overlaps feature	['intron']	[['chr1', '164657906', '164719664', '-', 'intron', 'Sbf2']]
+Target point	rn7_chr1_165113594+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_183613336+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_187710217+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_191959483+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_197849156+	overlaps feature	['intron']	[['chr1', '197848354', '197863611', '-', 'intron', 'Ins2']]
+Target point	rn7_chr1_199739657+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr12_7418262-	overlaps feature	['intron']	[['chr12', '7413762', '7423255', '+', 'intron', 'Flt1']]
+Target point	rn7_chr12_13185983-	overlaps feature	['intron']	[['chr12', '13021502', '13363345', '-', 'intron', 'Sdk1']]
+Target point	rn7_chr12_21826522-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr12_23322647-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr12_28315691-	overlaps feature	('RNA', 'intron')	(['chr12', '28309240', '28329042', '+', 'lnc_RNA', 'LOC120095943'], ['chr12', '28270829', '28560668', '+', 'intron', 'Tmem132d'])
+Target point	rn7_chr12_35419422-	overlaps feature	['intron']	[['chr12', '35418316', '35420700', '+', 'intron', 'Ptpn11']]
+Target point	rn7_chr14_11579009-	overlaps feature	['intron']	[['chr14', '11564041', '11581837', '+', 'intron', 'Antxr2']]
+Target point	rn7_chr14_30101351-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr14_39998440-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr14_40842521-	overlaps feature	['intron']	[['chr14', '40842479', '40843405', '-', 'intron', 'Slc30a9']]
+Target point	rn7_chr14_48653759-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr14_77962419-	overlaps feature	['intron']	[['chr14', '77955505', '77964485', '+', 'intron', 'Pisd']]
+Target point	rn7_chr4_6707361-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr4_15441959-	overlaps feature	['intron']	[['chr4', '15407487', '15869600', '-', 'intron', 'Magi2']]
+Target point	rn7_chr4_19647490-	overlaps feature	['intergenic']	[]
+Target point	rn7_chr4_22776476-	overlaps feature	['intergenic']	[]
+
+
+Enough checking. What we really want is the annotation data frame:
+
+                      qkey           qftype                 tkey           tftype  qgann_chr           qgann_from             qgann_to qgann_strand      qgann_ftype     qgann_gene    tgann_chr         tgann_from           tgann_to tgann_strand      tgann_ftype             tgann_gene
+0   mm39_chr7_136751562+_1              RNA  rn7_chr1_191959483+       intergenic       chr7            136747542            136753610            +          lnc_RNA        Gm30061         None               None               None         None             None                   None
+1    mm39_chr7_65894314+_1       intergenic  rn7_chr1_119827063+              RNA       None                 None                 None         None             None           None         chr1          119804730          119844038            +          lnc_RNA           LOC102549616
+2    mm39_chr7_39963758+_1       intergenic   rn7_chr1_91990478+              RNA       None                 None                 None         None             None           None         chr1           91982400           92028239            +          lnc_RNA           LOC102548815
+3   mm39_chr5_133391027+_1       intergenic  rn7_chr12_23322647-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+4   mm39_chr5_128467487+_1           intron  rn7_chr12_28315691-       RNA,intron       chr5            128346441            128509349            -           intron       Tmem132d  chr12,chr12  28309240,28270829  28329042,28560668          +,+   lnc_RNA,intron  LOC120095943,Tmem132d
+5     mm39_chr7_7509189+_1       pseudogene   rn7_chr1_70572481-       pseudogene       chr7              7496980              7509911            -       pseudogene         Gm3563         chr1           70571815           70576977            +       pseudogene             Vom2r-ps49
+6   mm39_chr5_147546894+_1           intron   rn7_chr12_7418262-           intron       chr5            147540436            147551938            -           intron           Flt1        chr12            7413762            7423255            +           intron                   Flt1
+7    mm39_chr7_77448472+_1       intergenic  rn7_chr1_131702764+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+8    mm39_chr5_12180119+_1       intergenic   rn7_chr4_22776476-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+9    mm39_chr7_10015459+_1       pseudogene   rn7_chr1_64833880-              CDS       chr7             10014739             10015664            -       pseudogene     Vmn1r-ps47         chr1           64833691           64834624            +              CDS                Vom1r28
+10   mm39_chr7_88735976+_1       intergenic  rn7_chr1_142953708+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+11  mm39_chr5_141411229+_1           intron  rn7_chr12_13185983-           intron       chr5            141227847            141568047            +           intron           Sdk1        chr12           13021502           13363345            -           intron                   Sdk1
+12   mm39_chr7_29076176+_1           intron   rn7_chr1_84677829+           intron       chr7             29070664             29076920            -           intron        Sipa1l3         chr1           84672717           84678561            -           intron                Sipa1l3
+13   mm39_chr5_32924223+_1           intron  rn7_chr14_77962419-           intron       chr5             32922292             32931739            -           intron           Pisd        chr14           77955505           77964485            +           intron                   Pisd
+14   mm39_chr7_76782926+_1       intergenic  rn7_chr1_130961760+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+15  mm39_chr7_132527310+_1              RNA  rn7_chr1_187710217+       intergenic       chr7            132476342            132535739            -          lnc_RNA  1500002F19Rik         None               None               None         None             None                   None
+16   mm39_chr7_35312608+_1           intron   rn7_chr1_88278348+           intron       chr7             35311980             35313879            +           intron        Ankrd27         chr1           88277733           88279421            +           intron                Ankrd27
+17  mm39_chr5_121274160+_1           intron  rn7_chr12_35419422-           intron       chr5            121272889            121275479            -           intron         Ptpn11        chr12           35418316           35420700            +           intron                 Ptpn11
+18  mm39_chr7_110601296+_1       intergenic  rn7_chr1_165113594+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+19   mm39_chr7_42946122+_1  three_prime_UTR   rn7_chr1_93708042+  three_prime_UTR       chr7             42945945             42947297            -  three_prime_UTR         Zfp715         chr1           93706004           93709255            -  three_prime_UTR                 Zfp715
+20   mm39_chr5_67484997+_1           intron  rn7_chr14_40842521-           intron       chr5             67484295             67485040            +           intron        Slc30a9        chr14           40842479           40843405            -           intron                Slc30a9
+21   mm39_chr5_61462094+_1       intergenic  rn7_chr14_48653759-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+22   mm39_chr5_98130668+_1           intron  rn7_chr14_11579009-           intron       chr5             98127893             98151085            -           intron         Antxr2        chr14           11564041           11581837            +           intron                 Antxr2
+23   mm39_chr5_78234440+_1       intergenic  rn7_chr14_30101351-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+24   mm39_chr5_28918809+_1              RNA    rn7_chr4_6707361-       intergenic       chr5             28671981             28924207            +          lnc_RNA  9530036O11Rik         None               None               None         None             None                   None
+25  mm39_chr7_110180418+_1       RNA,intron  rn7_chr1_164679937+           intron  chr7,chr7  110170276,110159550  110205148,110213913          -,-   lnc_RNA,intron   Gm46027,Sbf2         chr1          164657906          164719664            -           intron                   Sbf2
+26  mm39_chr7_142238093+_1       intergenic  rn7_chr1_197849156+           intron       None                 None                 None         None             None           None         chr1          197848354          197863611            -           intron                   Ins2
+27   mm39_chr7_97567537+_1       intergenic  rn7_chr1_152231821+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+28   mm39_chr7_82414986+_1           intron  rn7_chr1_136751762+           intron       chr7             82412622             82421664            +           intron           Efl1         chr1          136749367          136758166            +           intron                   Efl1
+29   mm39_chr5_19860711+_1       RNA,intron   rn7_chr4_15441959-           intron  chr5,chr5    19838886,19432587    19950531,19883650          -,+   lnc_RNA,intron  Gm52766,Magi2         chr4           15407487           15869600            -           intron                  Magi2
+30  mm39_chr7_144130704+_1       intergenic  rn7_chr1_199739657+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+31   mm39_chr5_15071689+_1       intergenic   rn7_chr4_19647490-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+32  mm39_chr7_100389604+_1           intron  rn7_chr1_155091863+           intron       chr7            100356100            100436010            +           intron        Fam168a         chr1          155057563          155142248            +           intron                Fam168a
+33  mm39_chr7_128647864+_1       intergenic  rn7_chr1_183613336+       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+34   mm39_chr7_24604402+_1           intron   rn7_chr1_80501035+           intron       chr7             24602553             24607140            +           intron        Arhgef1         chr1           80499207           80503711            +           intron                Arhgef1
+35  mm39_chr5_134903814+_1       intergenic  rn7_chr12_21826522-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+36   mm39_chr5_68329355+_1       intergenic  rn7_chr14_39998440-       intergenic       None                 None                 None         None             None           None         None               None               None         None             None                   None
+
+
+With data frame procssing we can derive useful statistics, for example paired annotation counts:
+
+tftype           CDS  RNA  RNA,intron  intergenic  intron  pseudogene  three_prime_UTR  Total
+qftype                                                                                       
+RNA                0    0           0           3       0           0                0      3
+RNA,intron         0    0           0           0       2           0                0      2
+intergenic         0    2           0          14       1           0                0     17
+intron             0    0           1           0      11           0                0     12
+pseudogene         1    0           0           0       0           1                0      2
+three_prime_UTR    0    0           0           0       0           0                1      1
+Total              1    2           1          17      14           1                1     37
+
+... building a pickle for  test08a
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+... building a pickle for  mm39_rn7_randomSNPs_annotated
+... done
+Consider adding the pickle to your gainsaw.conf file.
+

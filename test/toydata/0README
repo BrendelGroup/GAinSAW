@@ -1,0 +1,63 @@
+# The three toy genomes are aligned as follows:
+#
+>Achr1
+ACCTACCTACCTACCTACCTACCT            GGATGGATGGATGGATGGAT AAAAAAAAAAAA GGGGGGGGGGAGGGGGGGGGGG GGCAGGCAGGCAGGCAGGCA GG
+>Bchr2
+ACCTACCTACCTACCTACCTACCT TTTTTTTTTC GGATGGATGGATGGATGGAT              CCCCCCCCCCCTCCCCCCCCCC GGCAGGCAGGCAGGCAGGCA TAAA
+>Cchr3
+AGGTAGGTAGGTAGGTAGGTAGGT TTTTTTTTTC GGATGGATGGATGGATGGAT              CCCCCCCCCCCTCCCCCCCCCC GGCAGGCAGGCAGGCAGGCA TAAA
+
+# For easy checking, here are the sequences without gaps, including the reverse sequences for B and C:
+#
+>Achr1
+ACCTACCTACCTACCTACCTACCTGGATGGATGGATGGATGGATAAAAAAAAAAAAGGGGGGGGGGAGGGGGGGGGGGGGCAGGCAGGCAGGCAGGCAGG
+>Bchr2
+ACCTACCTACCTACCTACCTACCTTTTTTTTTTCGGATGGATGGATGGATGGATCCCCCCCCCCCTCCCCCCCCCCGGCAGGCAGGCAGGCAGGCATAAA
+>Bchr2-reverse
+TTTATGCCTGCCTGCCTGCCTGCCGGGGGGGGGGAGGGGGGGGGGGATCCATCCATCCATCCATCCGAAAAAAAAAAGGTAGGTAGGTAGGTAGGTAGGT
+>Cchr3
+AGGTAGGTAGGTAGGTAGGTAGGTTTTTTTTTTCGGATGGATGGATGGATGGATCCCCCCCCCCCTCCCCCCCCCCGGCAGGCAGGCAGGCAGGCATAAA
+>Cchr3-reverse
+TTTATGCCTGCCTGCCTGCCTGCCGGGGGGGGGGAGGGGGGGGGGGATCCATCCATCCATCCATCCGAAAAAAAAAACCTACCTACCTACCTACCTACCT
+
+# All sequnces are of length 100. The chain files indicate the alignment blocks.
+# Critical for interpretation is that the interval coordinates are in bed style, and for
+# target - strand the coordinates refer to positions in the reverse complement sequence.
+#
+
+# AtoB.over.chain
+#
+chain 500 Achr1 100 + 0 44 Bchr2 100 + 0 54 1
+24	0	10
+20
+
+chain 100 Achr1 100 + 56 78 Bchr2 100 - 24 46 2
+22
+
+chain 50 Achr1 100 + 78 98 Bchr2 100 + 76 96 3
+20
+
+
+# AtoC.over.chain
+#
+chain 500 Achr1 100 + 0 24 Cchr3 100 - 76 100 1
+24
+
+chain 100 Achr1 100 + 56 78 Cchr3 100 - 24 46 2
+22
+
+chain 50 Achr1 100 + 78 98 Cchr3 100 + 76 96 3
+20
+
+
+# Check the validity of the pyliftover and gainsaw code by running:
+#
+python testpylAB.py
+python testgnsAB.py > testAB.out
+python testpylAC.py
+python testgnsAC.py > testAC.out
+
+# New versions of gainsaw should be tested for compatibility:
+#
+diff testAB.out testAB.out.orig
+diff testAC.out testAC.out.orig

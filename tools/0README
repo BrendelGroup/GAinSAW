@@ -1,0 +1,29 @@
+# Tools used in gainsaw data processing.
+#
+
+# The xtidyGFF script relies on the canon-gff3 executable from the AEGeAn package
+# (https://github.com/BrendelGroup/AEGeAn). You can either install the AEGeAn
+# package, or you can let xtidyGFF invoke canon-gff3 via the GAinSAW.sif
+# singularity image file.
+
+# Please see https://apptainer.org/docs/admin/main/installation.html on how to
+# install apptainer on your system. For some OS, package installers can do
+# this; e.g., Fedora: dnf install apptainer.
+
+# Get the GAinSAW.sif container as follows:
+#
+
+wget https://BrendelGroup.org/SingularityHub/GAinSAW.sif
+
+# We also make use of the following UCSC tools. You may decide to install the
+# whole set of available scripts from the UCSC download site.
+#
+wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/chromToUcsc
+wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigBedInfo
+wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigBedSummary
+wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigBedToBed
+wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/chainFilter
+chmod a+x chromToUcsc bigBed* chainFilter
+
+# All scripts in this directory should be made available on your system PATH. See
+# ../xsetup.

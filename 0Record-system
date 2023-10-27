@@ -1,0 +1,81 @@
+# Some basic packages should be installed system-wide. You'll need sudo privileges for this.
+# The following dnf instructions are for Fedora Linux. Other Linux varieties (e.g., Ubuntu)
+# will have similar package management options (e.g., apt).
+#
+# Please also see tools/0README.
+# #
+# https://apptainer.org/docs/admin/main/installation.html describes how to install
+# apptainer on your system. For some OS, package installers can do this; e.g., for Fedora
+# the command 'dnf install apptainer' below will do.
+
+
+dnf -y install curl libcurl libcurl-devel ncurses ncurses-devel
+dnf -y install zlib zlib-devel libcurl libcurl-devel xz xz-devel xz-libs openssl openssl-devel
+dnf install apptainer
+dnf install python3-pip
+dnf install python3-wheel
+dnf install python3-pdm-pep517
+dnf install python3-build
+
+    echo 'Installing BLAST+ version 2.14.0 from NCBI ' 
+    cd /usr/local/src
+    wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.14.0/ncbi-blast-2.14.0+-x64-linux.tar.gz
+    tar -xzf ncbi-blast-2.14.0+-x64-linux.tar.gz
+    cd ncbi-blast-2.14.0+/bin
+    cp * /usr/local/bin/
+    cd ../..
+    rm ncbi-blast-2.14.0+-x64-linux.tar.gz
+    cd ..
+
+    echo 'Installing HTSLIB from http://www.htslib.org/ '
+    cd /usr/local/src
+    git clone https://github.com/samtools/htslib.git htslib
+    cd htslib
+    git submodule update --init --recursive
+    make && make install
+
+    echo 'Installing SAMTOOLS from http://www.htslib.org/ '
+    cd /usr/local/src
+    git clone https://github.com/samtools/samtools.git samtools
+    cd samtools
+    autoreconf
+    ./configure
+    make && make install
+
+    echo 'Installing GFFRead from https://github.com/gpertea/gffread '
+    cd /usr/local/src
+    git clone https://github.com/gpertea/gffread
+    cd gffread
+    make release
+
+    echo 'Installing bedtools from https://github.com/arq5x/bedtools2/ '
+    cd /usr/local/src
+    git clone https://github.com/arq5x/bedtools2.git
+    cd bedtools2/
+    ### The following corrects a code mistake (reported issue):
+    #
+    sed -i -e "17a #include <cstdint>" src/utils/general/ParseTools.h
+    make && make install && make clean
+
+    echo 'Installing bedops from https://github.com/bedops '
+    cd /usr/local/src
+    mkdir bedops && cd bedops
+    wget https://github.com/bedops/bedops/releases/download/v2.4.41/bedops_linux_x86_64-v2.4.41.tar.bz2
+    tar jxvf bedops_linux_x86_64-v2.4.41.tar.bz2
+    # ... creates bin directory with tool binaries; added to path below
+    \rm bedops_linux_x86_64-v2.4.41.tar.bz2
+
+    echo 'Installing gfftobed from https://github.com/jacobbierstedt/gfftobed.git '
+    cd /usr/local/src
+    git clone https://github.com/jacobbierstedt/gfftobed.git
+    cd gfftobed
+    make
+    cp gfftobed /usr/local/bin
+
+    echo 'Installing genometools from http://genometools.org/ '
+    cd /usr/local/src
+    wget http://genometools.org/pub/genometools-1.6.2.tar.gz
+    tar -xzf genometools-1.6.2.tar.gz
+    cd genometools-1.6.2
+    make errorcheck=no
+    make install

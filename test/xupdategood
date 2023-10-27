@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+
+\mv out00 good00
+\mv out01 good01
+\mv out02 good02
+\mv out03 good03
+\mv out04 good04
+\mv out05 good05
+\mv out06 good06
+\mv out07 good07
+\mv out08a good08a
+\mv out08b good08b

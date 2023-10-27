@@ -1,0 +1,61 @@
+# To create a working python environment for gainsaw, something like the
+# following will work.
+
+# 1. Set up conda to manage our python environment:
+#
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash ./Miniconda3-latest-Linux-x86_64.sh 
+
+# 1.1. Open a new shell and type:
+#
+conda config --set auto_activate_base false
+
+# 1.2. Open a new shell and type:
+#
+conda env list
+\rm Miniconda3-latest-Linux-x86_64.sh
+
+
+# 2. Now create an environment for gainsaw development:
+#
+conda create --name gainsaw
+conda activate gainsaw
+conda install python=3.11.3 anaconda
+conda install Cython
+pip install build
+pip install biopython
+
+
+# 3. Install pybedtools (required for gainsaw) and pyliftover (our
+#    original template for gainsaw) into the gainsaw environment:
+#
+git clone https://github.com/daler/pybedtools.git
+cd pybedtools/
+### Temporary fix to pybedtools as per github notes:
+###
+sed -i -e "1a # cython: language_level=2"  pybedtools/cbedtools.pyx
+sed -i -e "1a # cython: language_level=2"  pybedtools/featurefuncs.pyx
+sed -i -e "1a # cython: language_level=2"  pybedtools/_Window.pyx
+sed -i -e "287a \        language_level=2,"  setup.py
+###
+python setup.py build
+python setup.py install
+cd ..
+
+git clone https://github.com/konstantint/pyliftover.git
+conda deactivate gainsaw
+
+
+# 4. From now one, work on gainsaw in the gainsaw environment; e.g., to
+#    build the latest version:
+#
+git clone https://github.com/vpbrendel/GAinSAW.git
+cd GAinSAW
+
+# ... first-time setup; or "cd GAinSAW; git pull origin main" for updating.
+#
+conda activate gainsaw
+cd gainsaw
+python -m build
+python -m pip install .
+cd ..

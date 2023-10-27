@@ -1,0 +1,171 @@
+gainsaw version:  0.1 
+
+
+***
+  Solution to test03.py exercise:
+    mv ../data/liftovers/mm39chr5and7ToRn7.over.chain.lo.pkl ../data/liftovers/mm39chr5and7ToRn7.lo.pkl
+    sed -i -e "/\[liftovers\]/a mm39chr5and7ToRn7 = ../data/liftovers/mm39chr5and7ToRn7.lo.pkl" test.gainsaw.conf
+***
+
+... loading existing LiftOver object  ../data/liftovers/mm39chr5and7ToRn7.lo.pkl
+
+[(33405066, 'chr5', 77482820, 'chr14', '-', 33404990, 33405261, 77482626, 77482897, '14', 3196286296, [1])]
+[(33432337, 'chr5', 77455565, 'chr14', '-', 33432082, 33432673, 77455230, 77455821, '14', 3196286296, [1])]
+[(132589291, 'chr7', 187782616, 'chr1', '+', 132588896, 132589351, 187782221, 187782676, '6', 5462046663, [1])]
+[(132617218, 'chr7', 187812088, 'chr1', '+', 132617187, 132617251, 187812057, 187812121, '6', 5462046663, [1])]
+
+
+***
+  Great. With our conf file updated, the commands
+    gsconf.read('test.gainsaw.conf')
+    lo = LiftOver('mm39chr5and7ToRn7','../data/liftovers')
+    ps = PointSet(lo,"mm39.Ctbp.bed")
+    ps.check_pdata(0)
+  give us the mm39 Ctbp gene end points mapped to rn7. How well do the
+  corresponding genome segments align?
+  Our first answer is to re-align the sequences from the alignment blocks in
+  the input chainfile that the liftover relied upon. To do this, we load the
+  (indexed) genomic sequences and use the following gainsaw methods:
+    qGenomic_fasta = 'mm39'
+    tGenomic_fasta = rn7'
+    mycrt = gsparams._replace(slop_size=0)
+    ps.lopset.align_seqset(qGenomic_fasta, tGenomic_fasta, mycrt)
+    ps.lopset.write_alignments()
+***
+
+... loading existing fasta index
+... done
+... loading existing fasta index
+... done
+There are  4  set(s) of segment sequences: 
+
+*** Alignment(s) ***
+33405066_in_chr5:33404990-33405261|chr14:77482626-77482897(query|target)
+Strand = +/-(query|target)
+Score =  482.0
+Fraction of mismatches = 12/271 = 4.4%
+target            0 AGGTCATGAGAGTTAGGCCCAGAAGGGACCCACCAGCGCTCCCACTTGATGAAGCCATTA
+                  0 ||||||||||||.||||.||||||||||||||||||.|||||||.|||||||||||||||
+query             0 AGGTCATGAGAGCTAGGACCAGAAGGGACCCACCAGTGCTCCCATTTGATGAAGCCATTA
+
+target           60 AAGCTGGGGCCAGGCGTGCCGGCTCTTTCTGGGATTTTTATTTCTTTAAAATAATTCATA
+                 60 ||.||||.||||||||||||||||||||||||||||||||||||||||||||||||||||
+query            60 AAACTGGTGCCAGGCGTGCCGGCTCTTTCTGGGATTTTTATTTCTTTAAAATAATTCATA
+
+target          120 CAAATGGTTACAGTCACAAACATGATTTTAACCAAAATATTGCTAGCCTACCACATCAGC
+                120 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||.|||
+query           120 CAAATGGTTACAGTCACAAACATGATTTTAACCAAAATATTGCTAGCCTACCACATGAGC
+
+target          180 AGGACGGCACCACGTAGGCAAGGGTCTGCCAACCCCTGCCTTCCCCAGGACAGACCCCGA
+                180 ||||||||||||||.||||||||||||||||||||||||||.|||||||||||||||||.
+query           180 AGGACGGCACCACGCAGGCAAGGGTCTGCCAACCCCTGCCTCCCCCAGGACAGACCCCGG
+
+target          240 TGGTCCTGAGCACACTGGGCACTGCAGACAC 271
+                240 |||||||||||||.|||||||||||||||.| 271
+query           240 TGGTCCTGAGCACCCTGGGCACTGCAGACGC 271
+
+
+*** Alignment(s) ***
+33432337_in_chr5:33432082-33432673|chr14:77455230-77455821(query|target)
+Strand = +/-(query|target)
+Score =  1097.0
+Fraction of mismatches = 17/591 = 2.9%
+target            0 CCCCCCGCCCGCAGCCGGAAATGTGCGCGCGCGGCCTTACCCAGCGGCAGGCCCTTGTTG
+                  0 |||||||||||||||||||||||.||||||||||||||||||||||||||||||||||||
+query             0 CCCCCCGCCCGCAGCCGGAAATGCGCGCGCGCGGCCTTACCCAGCGGCAGGCCCTTGTTG
+
+target           60 AGCAAGTGCGAGCTGCCCATTGAAAGGCGCGGGTGGCCGCGGGCCCCGATGAGTCCGGCG
+                 60 ||||||||.||||||||||||||||||.||||||||||||||||||||||||||||||||
+query            60 AGCAAGTGGGAGCTGCCCATTGAAAGGTGCGGGTGGCCGCGGGCCCCGATGAGTCCGGCG
+
+target          120 CTCTCCGCCGCCGCGAGCCCTGCGCCTGGGGCGGCTTCGGCGCAGTCTGCTATTCCGCCC
+                120 ||||||||||||||||||||||||||||||||||||||||||||||||||||.|||||||
+query           120 CTCTCCGCCGCCGCGAGCCCTGCGCCTGGGGCGGCTTCGGCGCAGTCTGCTACTCCGCCC
+
+target          180 GGCCGCCTGCGACCGGCCACCGCCGTGCCGAGCCGCCACCGCGCCGCCAGCCGCGCTCCG
+                180 |||||||||||.||||||||||||||||||||||||||||||||||||||||||||||||
+query           180 GGCCGCCTGCGCCCGGCCACCGCCGTGCCGAGCCGCCACCGCGCCGCCAGCCGCGCTCCG
+
+target          240 ACCGACGAGCGGGCGGGGACACGCGGCGCGCGCGCGCGGGCGTGGCCTCGGTTGGTCTGC
+                240 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           240 ACCGACGAGCGGGCGGGGACACGCGGCGCGCGCGCGCGGGCGTGGCCTCGGTTGGTCTGC
+
+target          300 TGTTTGCCGGCAAGGCGGCGCGCTGGACGTACGCGGGCGGCTCAGGGGCCCAGCTGCCCG
+                300 |||||||.||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           300 TGTTTGCAGGCAAGGCGGCGCGCTGGACGTACGCGGGCGGCTCAGGGGCCCAGCTGCCCG
+
+target          360 CCGGCCCGGCGCTCGGCCCCCACCCCCCGCGCCCCTCCCAGGCTGGATTCCCTTCCTGGA
+                360 ||||||||.||||||||||||||||||.||||||||||||||||||||||||||||||||
+query           360 CCGGCCCGACGCTCGGCCCCCACCCCCAGCGCCCCTCCCAGGCTGGATTCCCTTCCTGGA
+
+target          420 CACGCCCCCAGCTGTACCCGCCCCCGGCCTCCCCTCCCCTGCGCGTACCCGGGACTGTGC
+                420 ||||||||||||||||||||||||||||||||||||||||||||||||||.||||||.||
+query           420 CACGCCCCCAGCTGTACCCGCCCCCGGCCTCCCCTCCCCTGCGCGTACCCCGGACTGCGC
+
+target          480 CCCTGCCACTCCTTGGCTCGGTGACCTGGGCTGGAGCCCGAGTGGTGAAGCAGCCCATCC
+                480 |||||||||||||||||.|||||||||||||.||||||.|||||||||||||||||||||
+query           480 CCCTGCCACTCCTTGGCGCGGTGACCTGGGCCGGAGCCTGAGTGGTGAAGCAGCCCATCC
+
+target          540 GCGTGGGGCGCTACCGGGCTAGTCGCCGCGGACTCAAGAGGACAGCGAGAG 591
+                540 |||||||||||||||.|.||||||||||.||.||||||||||||||||||| 591
+query           540 GCGTGGGGCGCTACCAGTCTAGTCGCCGGGGCCTCAAGAGGACAGCGAGAG 591
+
+
+*** Alignment(s) ***
+132589291_in_chr7:132588896-132589351|chr1:187782221-187782676(query|target)
+Strand = +/+(query|target)
+Score =  880.0
+Fraction of mismatches = 6/455 = 1.3%
+target            0 GTCACAAAAACAGGAATGTACCTATACAAAGGCTCAAAATAGGCCATCTTTAAAAACAAA
+                  0 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query             0 GTCACAAAAACAGGAATGTACCTATACAAAGGCTCAAAATAGGCCATCTTTAAAAACAAA
+
+target           60 AAGGCAATGATTCACAAAAGACTATGAATAGAACATGTAACTAGCTGATACAAATCTAAT
+                 60 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query            60 AAGGCAATGATTCACAAAAGACTATGAATAGAACATGTAACTAGCTGATACAAATCTAAT
+
+target          120 AGGATTTGTTAAAATCAGTCACATCTAATAGCACATCTGAAGTGTTCTTGTATAAAATAT
+                120 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           120 AGGATTTGTTAAAATCAGTCACATCTAATAGCACATCTGAAGTGTTCTTGTATAAAATAT
+
+target          180 CACGTGAAGAAAAGAATTTATCAATGTCTAAAAAAGTGGGTTTGTTCATAGACAATCTGA
+                180 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           180 CACGTGAAGAAAAGAATTTATCAATGTCTAAAAAAGTGGGTTTGTTCATAGACAATCTGA
+
+target          240 CAAGTTACCATAAAAAGTGTTTCCTGAGACATAAGGAAATGCAACATTATTCTTCTTGAA
+                240 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           240 CAAGTTACCATAAAAAGTGTTTCCTGAGACATAAGGAAATGCAACATTATTCTTCTTGAA
+
+target          300 CCCTTCTCGTCCAAGACTTTCCACTCAATAAAATAGCTGAGGATCTGAAACTGAGAAAAT
+                300 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           300 CCCTTCTCGTCCAAGACTTTCCACTCAATAAAATAGCTGAGGATCTGAAACTGAGAAAAT
+
+target          360 ATATTTGAGTACAAACAGCTTGTGAAACTTAATACTTTTTTCTTTTGTTCTTTTCCTTTT
+                360 |.||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+query           360 AGATTTGAGTACAAACAGCTTGTGAAACTTAATACTTTTTTCTTTTGTTCTTTTCCTTTT
+
+target          420 TTTGTTTTTTTTTTTTGTTTGTTTGTTGTTTTTGT 455
+                420 |||.||||.|||||||||||.|||.||.||||||| 455
+query           420 TTTTTTTTGTTTTTTTGTTTTTTTTTTTTTTTTGT 455
+
+
+*** Alignment(s) ***
+132617218_in_chr7:132617187-132617251|chr1:187812057-187812121(query|target)
+Strand = +/+(query|target)
+Score =  123.0
+Fraction of mismatches = 1/64 = 1.6%
+target            0 AGCCCAGGCAGGAGGCTGTGCTCCAGTCTGCTGGGCCCCCTTTCCAGTGGCTGTGCTCAC
+                  0 ||||||||||||||||||||||||||.|||||||||||||||||||||||||||||||||
+query             0 AGCCCAGGCAGGAGGCTGTGCTCCAGCCTGCTGGGCCCCCTTTCCAGTGGCTGTGCTCAC
+
+target           60 ATGG 64
+                 60 |||| 64
+query            60 ATGG 64
+
+
+***
+  The output shows the alignments which should be gap-free (although in some
+  cases, there may be alternative alignments with compensating gaps; clearly,
+  this depends on the sequences and alignment algorithm).
+***
+

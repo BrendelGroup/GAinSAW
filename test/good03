@@ -1,0 +1,29 @@
+gainsaw version:  0.1 
+
+... loading existing LiftOver object  ../data/liftovers/mm10ToMm39.lo.pkl
+
+  For a more useful example of using PointSet methods, we'll save the mm39
+  coordinates from our first liftover and then lift those over to rat rn7:
+    f = open("lifted.mm10.Ctbp.bed","w")
+    ps.output_lifted_points(f)
+    lo2 = LiftOver('mm39chr5and7ToRn7.over.chain','../data/liftovers')
+    ps2 = PointSet(lo2,"lifted.mm10.Ctbp.bed")
+    ps2.check_pdata(0)
+
+... building LiftOver object for input  ../data/liftovers/mm39chr5and7ToRn7.over.chain
+... done
+... saving LiftOver object  ../data/liftovers/mm39chr5and7ToRn7.over.chain.lo.pkl
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+[(33405066, 'chr5', 77482820, 'chr14', '-', 33404990, 33405261, 77482626, 77482897, '14', 3196286296, [1])]
+[(33432337, 'chr5', 77455565, 'chr14', '-', 33432082, 33432673, 77455230, 77455821, '14', 3196286296, [1])]
+[(132589291, 'chr7', 187782616, 'chr1', '+', 132588896, 132589351, 187782221, 187782676, '6', 5462046663, [1])]
+[(132617218, 'chr7', 187812088, 'chr1', '+', 132617187, 132617251, 187812057, 187812121, '6', 5462046663, [1])]
+
+  Done. We now have the coordinates of the Ctbp genes for both mm39 and rn7,
+  starting from the known locations in mm10.
+
+  Exercise: Add a liftovers entry for mm39chr5and7ToRn7 to test.gainsaw.conf
+            for future use of the object.
+

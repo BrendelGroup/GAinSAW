@@ -1,0 +1,134 @@
+==========
+__init__.py:
+
+from .liftover  import LiftOver
+from .pointsets import PointSet
+from .bedding   import BedWrap
+from .config           import (gsconf, cfcheck, gsparams, gsscrs)
+from .process_pointset import get_lopset
+
+
+==========
+config.py:
+
+import sys
+from os import path
+import configparser
+from collections import namedtuple
+def cfcheck(configfile):
+
+
+==========
+liftover.py:
+
+from os import path
+import gzip
+import pickle
+from .config import gsconf
+from .process_chainfile import LiftOverChainFile
+class LiftOver:
+    def __init__(self, chainfile, data_dir='.'):
+    def convert_coordinate(self, chromosome, position, strand='+'):
+
+
+==========
+process_chainfile.py:
+
+from os import path
+import gzip
+import urllib
+import shutil
+import sys
+from .intervaltree import IntervalTree
+class LiftOverChainFile:
+    def __init__(self, f, show_progress=False):
+    def _load_chains(f, show_progress=False):
+    def _index_chains(chains, show_progress=False):
+    def query(self, chromosome, position):
+class LiftOverChain:
+    def __init__(self, chainheader, f):
+
+
+==========
+intervaltree.py:
+
+class IntervalTree:
+    def __init__(self, min, max):
+    def add_interval(self, start, end, data=None):
+    def _add_interval(self, start, end, data=None):
+    def sort(self):
+    def query(self, x):
+    def _query(self, x, result):
+    def __len__(self):
+    def __iter__(self):
+
+
+==========
+pointsets.py:
+
+import gzip
+from .process_pointset import LiftOverPointSet
+class PointSet:
+    def __init__(self, lo, pointsetfile, data_dir='.'):
+    def check_pdata(self, n = 10):
+    def output_lifted_points(self,f):
+    def output_alb(self,qoutfile,toutfile):
+
+
+==========
+process_pointset.py:
+
+import sys
+import datetime
+from os import path
+import gzip
+import pickle
+import pandas as pd
+from statistics import mean, median
+from collections import Counter
+from pybedtools import BedTool
+from .config import (gsconf, gsparams)
+from .align import get_segment_seqset, get_extended_point_seqset, align_segments, string_mismatch
+from .align import (get_fasta_index, get_fasta)
+class LiftOverPointSet:
+    def __init__(self, lo, f):
+    def _load_points(f):
+    def _liftover_points(points,lo):
+    def check_pdata(self, n = 10):
+    def filter_pdata(self, qGenomic_fasta, tGenomic_fasta, params = gsparams):
+    def get_filtered_pdata(self, params = gsparams, mode = "equal"):
+    def pdata_stats(self):
+    def align_seqset(self, qGenomic_fasta, tGenomic_fasta, params = gsparams):
+    def write_alignments(self, scoring = gsparams.scoring):
+    def make_beds(self, params = gsparams,
+    def pickle_lopset(self,lopset_label):
+    def get_feature_type(self, feature):
+    def annotate_points(self, params, what, annotation):
+    def annotate_lopset(self, params, qgann, tgann):
+    def create_annotation_dataframe(self):
+        def _extract_qgann(row):
+        def _extract_tgann(row):
+    def write_annotation_dataframe(self):
+    def pickle_annotation_dataframe(self, annot_df_label):
+    def count_feature(self):
+def get_lopset(lopset_label):
+
+
+==========
+align.py:
+
+from os import path
+from Bio import (Align, SeqIO)
+import pickle
+from .config import (gsconf, gsparams)
+def get_fasta_index(fasta_label):
+def get_fasta(fasta_index, chr, start, end, strand):
+def extract_segment_seq(pdata, params, qGenomic_fasta, tGenomic_fasta):
+def get_segment_seqset(pdata, params, qGenomic_fasta, tGenomic_fasta):
+def calculate_mismatch(alignment):
+def align_segments(seq1, seq2, strand, scoring = gsparams.scoring):
+def extract_extended_point_seq(pdata, params, qGenomic_fasta, tGenomic_fasta, slop_size):
+def get_extended_point_seqset(pdata, params, qGenomic_fasta, tGenomic_fasta, slop_size):
+def string_mismatch(seq1, seq2):
+
+

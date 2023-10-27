@@ -1,0 +1,8 @@
+# Ctbp1 start/end in mouse mm10, given as separate points:
+#
+chr5	33247722	33247723
+chr5	33274993	33274994
+
+# Ctbp2 start/end in mouse mm10, given as an interval:
+#
+chr7	132987562	133015490

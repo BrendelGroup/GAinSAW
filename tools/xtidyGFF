@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+shopt -s expand_aliases
+
+gwdir=$(dirname $(readlink -f "$0"))
+
+if ! [ $(command -v canon-gff3) ]; then
+  alias canon-gff3='apptainer exec -e -B${gwdir} ${gwdir}/GAinSAW.sif  canon-gff3'
+fi
+if ! [ $(command -v gt) ]; then
+  alias gt='apptainer exec -e -B${gwdir} ${gwdir}/GAinSAW.sif  gt'
+fi
+if ! [ -f ${gwdir}/tidyGFF2bed.py ]; then
+  echo -e "\n${gwdir}/tidyGFF2bed.py not found; please install.\n"
+  exit
+fi
+
+
+inputgff=$1
+if [ $# != 1 ]; then
+  echo -e "\nPlease provide the name of the input GFF file.\n"
+  exit
+fi
+
+gffinp=$(basename ${inputgff})
+gffdir="$(dirname ${inputgff})"
+tmpGFFfile=`uuidgen | tr -d '-'`
+
+
+grep -E "^##gff-version|^#!" ${inputgff} > ${tmpGFFfile}
+grep -E "	gene	|	pseudogene	|	primary_transcript	|	mRNA	" ${inputgff} >> ${tmpGFFfile}
+
+canon-gff3 ${inputgff} > ${tmpGFFfile}-canon
+
+grep -E "	exon	" ${tmpGFFfile}-canon | sort | sed -e "s/ /@@5@@/g" > ${tmpGFFfile}-canonexon
+paste <(cut -f6-9 ${tmpGFFfile}-canonexon) <(cut -f1-5 ${tmpGFFfile}-canonexon) | uniq -f4 > ${tmpGFFfile}-canonexonra
+paste <(cut -f5-9 ${tmpGFFfile}-canonexonra) <(cut -f1-4 ${tmpGFFfile}-canonexonra) | sed -e "s/@@5@@/ /g" > ${tmpGFFfile}-canonexonu
+
+grep -E "	CDS	" ${tmpGFFfile}-canon | sort | sed -e "s/ /@@5@@/g" > ${tmpGFFfile}-canonCDS
+paste <(cut -f6-9 ${tmpGFFfile}-canonCDS) <(cut -f1-5 ${tmpGFFfile}-canonCDS) | uniq -f4 > ${tmpGFFfile}-canonCDSra
+paste <(cut -f5-9 ${tmpGFFfile}-canonCDSra) <(cut -f1-4 ${tmpGFFfile}-canonCDSra) | sed -e "s/@@5@@/ /g" > ${tmpGFFfile}-canonCDSu
+
+grep -E "	intron	" ${tmpGFFfile}-canon | sort | sed -e "s/ /@@5@@/g" > ${tmpGFFfile}-canonintron
+paste <(cut -f6-9 ${tmpGFFfile}-canonintron) <(cut -f1-5 ${tmpGFFfile}-canonintron) | uniq -f4 > ${tmpGFFfile}-canonintronra
+paste <(cut -f5-9 ${tmpGFFfile}-canonintronra) <(cut -f1-4 ${tmpGFFfile}-canonintronra) | sed -e "s/@@5@@/ /g" > ${tmpGFFfile}-canonintronu
+
+grep -E "	five_prime_UTR	|	three_prime_UTR	" ${tmpGFFfile}-canon | sort | sed -e "s/ /@@5@@/g" > ${tmpGFFfile}-canonUTR
+paste <(cut -f6-9 ${tmpGFFfile}-canonUTR) <(cut -f1-5 ${tmpGFFfile}-canonUTR) | uniq -f4 > ${tmpGFFfile}-canonUTRra
+paste <(cut -f5-9 ${tmpGFFfile}-canonUTRra) <(cut -f1-4 ${tmpGFFfile}-canonUTRra) | sed -e "s/@@5@@/ /g" > ${tmpGFFfile}-canonUTRu
+
+grep -E "	antisense_RNA	|	lnc_RNA	|	miRNA	|	ncRNA	|	scRNA	|	snoRNA	|	snRNA	|	Y_RNA	|	rRNA	|	tRNA	" ${inputgff} | sort | sed -e "s/ /@@5@@/g" > ${tmpGFFfile}-RNA
+paste <(cut -f6-9 ${tmpGFFfile}-RNA) <(cut -f1-5 ${tmpGFFfile}-RNA) | uniq -f4 > ${tmpGFFfile}-RNAra
+paste <(cut -f5-9 ${tmpGFFfile}-RNAra) <(cut -f1-4 ${tmpGFFfile}-RNAra) | sed -e "s/@@5@@/ /g" > ${tmpGFFfile}-RNAu
+
+cat ${tmpGFFfile} ${tmpGFFfile}-canonexonu ${tmpGFFfile}-canonCDSu ${tmpGFFfile}-canonintronu ${tmpGFFfile}-canonUTRu ${tmpGFFfile}-RNAu | gt gff3 -sortnum -retainids -tidy > ${gffdir}/tidy-${gffinp}
+
+\rm ${tmpGFFfile}*
+echo -e "\nPlease see ${gffdir}/tidy-${gffinp}, which should provide non-redundant essential annotation features."
+
+tidybed=${gffdir}/tidy-"${gffinp%.gff}".bed
+python ${gwdir}/tidyGFF2bed.py ${gffdir}/tidy-${gffinp} | \
+	grep -E -v "	exon	|	primary_transcript	|	mRNA	" | \
+	sort -u | sort -k1,1 -k2,2n > ${tidybed}
+echo -e "For gainsaw, please use the feature-trimmed and sorted *.tidyann.bed file.\n"

@@ -1,0 +1,11 @@
+chain 500 Achr1 100 + 0 24 Cchr3 100 - 76 100 1
+24
+
+chain 500 Achr1 100 + 24 44 Cchr3 100 + 34 54 1
+20
+
+chain 100 Achr1 100 + 56 78 Cchr3 100 - 24 46 2
+22
+
+chain 50 Achr1 100 + 78 98 Cchr3 100 + 76 96 3
+20

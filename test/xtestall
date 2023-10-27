@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+
+python test00.py > out00; echo -e "\n\n\ndiff out00 good01\n*****************\n"; diff out00 good00
+python test01.py > out01; echo -e "\n\n\ndiff out01 good01\n*****************\n"; diff out01 good01
+python test02.py > out02; echo -e "\n\n\ndiff out02 good02\n*****************\n"; diff out02 good02
+python test03.py > out03; echo -e "\n\n\ndiff out03 good03\n*****************\n"; diff out03 good03
+python test04.py > out04; echo -e "\n\n\ndiff out04 good04\n*****************\n"; diff out04 good04
+python test05.py > out05; echo -e "\n\n\ndiff out05 good05\n*****************\n"; diff out05 good05
+python test06.py > out06; echo -e "\n\n\ndiff out06 good06\n*****************\n"; diff out06 good06
+python test07.py > out07; echo -e "\n\n\ndiff out07 good07\n*****************\n"; diff out07 good07
+python test08a.py > out08a; echo -e "\n\n\ndiff out08a good08a\n*****************\n"; diff out08a good08a
+python test08b.py > out08b; echo -e "\n\n\ndiff out08b good08b\n*****************\n"; diff out08b good08b

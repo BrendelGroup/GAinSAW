@@ -1,0 +1,5 @@
+To install the gainsaw package, run the commands in the script xrebuild.
+
+This should work if you previously followed the GAinSAW setup instructions
+and run xrebuild in your gainsaw environment.
+

@@ -1,0 +1,18 @@
+gainsaw version:  0.1 
+
+... loading existing LiftOver object  ../data/liftovers/mm10ToMm39.lo.pkl
+
+***
+  Here we have added to the code
+    from gainsaw.config import gsconf
+    gsconf.read('test.gainsaw.conf')
+  and loaded the previously pickled LiftOver object:
+    lo = LiftOver('mm10ToMm39','../data/liftovers')
+
+  The output is the same, but the code wil run faster for big objects.
+***
+
+[(33247722, 'chr5', 33405066, 'chr5', '+', 30339671, 38300289, 30497015, 38457633, '6', 14025902023, [1])]
+[(33274993, 'chr5', 33432337, 'chr5', '+', 30339671, 38300289, 30497015, 38457633, '6', 14025902023, [1])]
+[(132987562, 'chr7', 132589291, 'chr7', '+', 131107220, 139033259, 130708949, 138634988, '8', 13436734948, [1])]
+[(133015489, 'chr7', 132617218, 'chr7', '+', 131107220, 139033259, 130708949, 138634988, '8', 13436734948, [1])]

@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+
+\rm sitemap
+
+files='__init__.py config.py
+       liftover.py process_chainfile.py intervaltree.py
+       pointsets.py process_pointset.py
+       align.py
+      '
+for f in $files
+do
+  echo -e "==========\n$f:\n"                 >> sitemap
+  grep -E "^import |^from.*import|^class |def " $f >> sitemap
+  echo -e "\n"                 >> sitemap
+done

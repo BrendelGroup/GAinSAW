@@ -1,0 +1,414 @@
+gainsaw version:  0.1 
+
+... loading existing gainsaw config file  test.gainsaw.conf
+
+***
+  First, we load the pickle filtered_mm39_rn7_randomSNPs4ann.lops.pkl generated
+  in test07.py. Then we use pybedtools functionality to interset the point
+  intervals with genome features read from the requisite genome annotation bed
+  files (here we make use of the shortcuts to the annotation files as recorded
+  in the configuration file). The output shows the data structures generated to
+  classify the SNPs with respect to overlap with genome features, e.g. CDS,
+  introns, or RNA genes.
+
+    ps = get_lopset("filtered_mm39_rn7_randomSNPs4ann")
+    gbed_file = "mm39"
+    qgann = BedWrap(gbed_file)
+    gbed_file = "rn7"
+    tgann = BedWrap(gbed_file)
+    mycrt = gsparams._replace(qlabel='mm39',tlabel='rn7',slop_size=0)
+    ps.annotate_lopset(qgann.bed, tgann.bed)
+
+  We then change the filtering criteria to mismatch_rate 8% and re-display the
+  qualified points by the stricter criteria:
+
+    mycrt = mycrt._replace(mismatch_rate=8,setpfilter=2)
+    ps.filter_pdata(qGenomic_fasta, tGenomic_fasta, mycrt)
+    ps.make_beds(mycrt, "q_stringent_mm39randomSNPs_rn7", "mm39",
+                        "t_stringent_mm39randomSNPs_rn7", "rn7")
+    mycrt = mycrt._replace(slop_size=50)
+    ps.align_seqset(qGenomic_fasta, tGenomic_fasta, mycrt)
+    ps.write_alignments(gsscrs.lastz)
+    ps.annotate_lopset(mycrt, qgann.bed, tgann.bed)
+
+***
+
+... loading annotation file ../data/genomes/mm39/mm39.tidyann.bed
+... loading annotation file ../data/genomes/rn7/rn7.tidyann.bed
+... loading existing LiftOverPointSet object  filtered_mm39_rn7_randomSNPs4ann.lops.pkl
+... done
+Consider adding the pickle to your gainsaw.conf file.
+
+chr5	61462094	61462095	+
+chr5	128467487	128467488	+
+chr7	97567537	97567538	+
+chr7	100389604	100389605	+
+
+
+
+CHECK: Query index:
+
+{'mm39_chr5_128467487+': ['rn7_chr12_28315691-'], 'mm39_chr5_61462094+': ['rn7_chr14_48653759-'], 'mm39_chr7_97567537+': ['rn7_chr1_152231821+'], 'mm39_chr7_100389604+': ['rn7_chr1_155091863+']}
+
+
+CHECK: Target index:
+
+{'rn7_chr12_28315691-': ['mm39_chr5_128467487+'], 'rn7_chr14_48653759-': ['mm39_chr5_61462094+'], 'rn7_chr1_152231821+': ['mm39_chr7_97567537+'], 'rn7_chr1_155091863+': ['mm39_chr7_100389604+']}
+... now extracting genomic features from the annotation files
+
+Current date and time entering annotate_lopset    : 2023-10-18 11:41:51
+Current date and time done with qfeature_intervals: 2023-10-18 11:42:08
+Current date and time done with qbed intersection : 2023-10-18 11:42:09
+Current date and time done with qfeatures         : 2023-10-18 11:42:09
+Current date and time done with ubed intersection : 2023-10-18 11:42:09
+Current date and time done with ufeatures         : 2023-10-18 11:42:09
+Current date and time done with feature_intervals : 2023-10-18 11:42:24
+Current date and time done with tbed intersection : 2023-10-18 11:42:25
+Current date and time done with tfeatures         : 2023-10-18 11:42:25
+
+
+CHECK: Query ftype:
+
+{'mm39_chr5_61462094+': ['intergenic'], 'mm39_chr5_128467487+': ['intron'], 'mm39_chr7_97567537+': ['intergenic'], 'mm39_chr7_100389604+': ['intron']}
+
+
+CHECK: Unlifted query ftype:
+
+{'mm39_chr5_5904994+': ['intergenic'], 'mm39_chr5_17562626+': ['intergenic'], 'mm39_chr5_28114789+': ['intergenic'], 'mm39_chr5_52491704+': ['intergenic'], 'mm39_chr5_72674613+': ['intron'], 'mm39_chr5_80795494+': ['intergenic'], 'mm39_chr5_130506260+': ['intron'], 'mm39_chr5_151407248+': ['intergenic'], 'mm39_chr7_10033162+': ['intergenic'], 'mm39_chr7_11025594+': ['intergenic'], 'mm39_chr7_11556693+': ['intergenic'], 'mm39_chr7_14720772+': ['intergenic'], 'mm39_chr7_101264597+': ['intergenic']}
+
+
+CHECK: Target ftype:
+
+{'rn7_chr1_152231821+': ['intergenic'], 'rn7_chr1_155091863+': ['intron'], 'rn7_chr12_28315691-': ['RNA', 'intron'], 'rn7_chr14_48653759-': ['intergenic']}
+
+
+CHECK: Query annotation:
+
+{'mm39_chr5_61462094+': [], 'mm39_chr5_128467487+': [['chr5', '128346441', '128509349', '-', 'intron', 'Tmem132d']], 'mm39_chr7_97567537+': [], 'mm39_chr7_100389604+': [['chr7', '100356100', '100436010', '+', 'intron', 'Fam168a']]}
+
+
+CHECK: Unlifted query annotation:
+
+{'mm39_chr5_5904994+': [], 'mm39_chr5_17562626+': [], 'mm39_chr5_28114789+': [], 'mm39_chr5_52491704+': [], 'mm39_chr5_72674613+': [['chr5', '72674455', '72675537', '-', 'intron', 'Nfxl1']], 'mm39_chr5_80795494+': [], 'mm39_chr5_130506260+': [['chr5', '130443787', '130534904', '+', 'intron', 'Caln1']], 'mm39_chr5_151407248+': [], 'mm39_chr7_10033162+': [], 'mm39_chr7_11025594+': [], 'mm39_chr7_11556693+': [], 'mm39_chr7_14720772+': [], 'mm39_chr7_101264597+': []}
+
+
+CHECK: Target annotation:
+
+{'rn7_chr1_152231821+': [], 'rn7_chr1_155091863+': [['chr1', '155057563', '155142248', '+', 'intron', 'Fam168a']], 'rn7_chr12_28315691-': [['chr12', '28309240', '28329042', '+', 'lnc_RNA', 'LOC120095943'], ['chr12', '28270829', '28560668', '+', 'intron', 'Tmem132d']], 'rn7_chr14_48653759-': []}
+
+
+CHECK: qfeatures:
+
+Query point	mm39_chr5_61462094+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr5_128467487+	overlaps feature	['intron']	[['chr5', '128346441', '128509349', '-', 'intron', 'Tmem132d']]
+Query point	mm39_chr7_97567537+	overlaps feature	['intergenic']	[]
+Query point	mm39_chr7_100389604+	overlaps feature	['intron']	[['chr7', '100356100', '100436010', '+', 'intron', 'Fam168a']]
+
+
+CHECK: ufeatures:
+
+Unlifted query point	mm39_chr5_5904994+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_17562626+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_28114789+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_52491704+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_72674613+	overlaps feature	['intron']	[['chr5', '72674455', '72675537', '-', 'intron', 'Nfxl1']]
+Unlifted query point	mm39_chr5_80795494+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_130506260+	overlaps feature	['intron']	[['chr5', '130443787', '130534904', '+', 'intron', 'Caln1']]
+Unlifted query point	mm39_chr5_151407248+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_10033162+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_11025594+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_11556693+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_14720772+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_101264597+	overlaps feature	['intergenic']	[]
+
+
+CHECK: tfeatures:
+
+Target point	rn7_chr1_152231821+	overlaps feature	['intergenic']	[]
+Target point	rn7_chr1_155091863+	overlaps feature	['intron']	[['chr1', '155057563', '155142248', '+', 'intron', 'Fam168a']]
+Target point	rn7_chr12_28315691-	overlaps feature	('RNA', 'intron')	(['chr12', '28309240', '28329042', '+', 'lnc_RNA', 'LOC120095943'], ['chr12', '28270829', '28560668', '+', 'intron', 'Tmem132d'])
+Target point	rn7_chr14_48653759-	overlaps feature	['intergenic']	[]
+
+
+Annotation data frame:
+
+                     qkey      qftype                 tkey      tftype qgann_chr qgann_from   qgann_to qgann_strand qgann_ftype qgann_gene    tgann_chr         tgann_from           tgann_to tgann_strand     tgann_ftype             tgann_gene
+0  mm39_chr5_128467487+_1      intron  rn7_chr12_28315691-  RNA,intron      chr5  128346441  128509349            -      intron   Tmem132d  chr12,chr12  28309240,28270829  28329042,28560668          +,+  lnc_RNA,intron  LOC120095943,Tmem132d
+1   mm39_chr5_61462094+_1  intergenic  rn7_chr14_48653759-  intergenic      None       None       None         None        None       None         None               None               None         None            None                   None
+2   mm39_chr7_97567537+_1  intergenic  rn7_chr1_152231821+  intergenic      None       None       None         None        None       None         None               None               None         None            None                   None
+3  mm39_chr7_100389604+_1      intron  rn7_chr1_155091863+      intron      chr7  100356100  100436010            +      intron    Fam168a         chr1          155057563          155142248            +          intron                Fam168a
+
+
+CHECK: alignments for all non-outofbound points:
+
+... loading existing fasta index
+... done
+... loading existing fasta index
+... done
+
+There are  10  set(s) of extended_point sequences: 
+
+*** Alignment(s) ***
+128467487_in_chr5:128467462-128467513|chr12:28315666-28315717(query|target)
+Strand = +/-(query|target)
+Score =  4663.0
+Fraction of mismatches = 1/51 = 2.0%
+target            0 TAATGTTATTTGGGATTTTTCATTTCAACTCTTTCTCAAACTTTTGCCCTC 51
+                  0 ||||||||||||||||||||||||||.|||||||||||||||||||||||| 51
+query             0 TAATGTTATTTGGGATTTTTCATTTCGACTCTTTCTCAAACTTTTGCCCTC 51
+
+
+*** Alignment(s) ***
+10015459_in_chr7:10015434-10015485|chr1:64833855-64833906(query|target)
+Strand = +/-(query|target)
+Score =  1935.0
+Fraction of mismatches = 17/51 = 33.3%
+target            0 CGTCTGAAAGCTGACATTGTGCTGGGCACTCCTGAAGAGAGAATGATTACA 51
+                  0 .|||...||..|||||.|.|...||.|||||||||||.||||||||..|.. 51
+query             0 AGTCCCCAAAATGACAATATTTGGGTCACTCCTGAAGGGAGAATGACCAAG 51
+
+
+*** Alignment(s) ***
+29076176_in_chr7:29076151-29076202|chr1:84677804-84677855(query|target)
+Strand = +/+(query|target)
+Score =  3962.0
+Fraction of mismatches = 5/51 = 9.8%
+target            0 TACAAATGTTCTGGACCACATTCATAGCTATCCTGGTTTATGTGGGGCTTA 51
+                  0 |||||||||.||||.|||||||||||||||||||||.|||||||.||||.| 51
+query             0 TACAAATGTGCTGGGCCACATTCATAGCTATCCTGGGTTATGTGTGGCTCA 51
+
+
+*** Alignment(s) ***
+32924223_in_chr5:32924198-32924249|chr14:77962394-77962445(query|target)
+Strand = +/-(query|target)
+Score =  3765.0
+Fraction of mismatches = 7/51 = 13.7%
+target            0 CCAAGCCAGCTCATAGACATGCTGGCTCTGTTTTTAAAATAAGTAAATGTG 51
+                  0 ||||.||||||||..||||.|||||||||.|||||||||||||.||||.|| 51
+query             0 CCAAACCAGCTCACTGACACGCTGGCTCTTTTTTTAAAATAAGCAAATATG 51
+
+
+*** Alignment(s) ***
+132527310_in_chr7:132527285-132527336|chr1:187710192-187710243(query|target)
+Strand = +/+(query|target)
+Score =  3504.0
+Fraction of mismatches = 8/51 = 15.7%
+target            0 GGGCAATATAGACCATCAGGCTCAGGTTTTTATGCATGGTTGACAAGAGAT 51
+                  0 ||||..|||.|||||||||.|||||||||..|||||..||||||||||||| 51
+query             0 GGGCCTTATGGACCATCAGTCTCAGGTTTCCATGCACTGTTGACAAGAGAT 51
+
+
+*** Alignment(s) ***
+35312608_in_chr7:35312583-35312634|chr1:88278323-88278374(query|target)
+Strand = +/+(query|target)
+Score =  3102.0
+Fraction of mismatches = 11/51 = 21.6%
+target            0 CTTGATTACTATAAAGATAACTCCGAGATTCATTCTGTCTGTCTGTCTGTC 51
+                  0 |||||||||||||||||||||.|.|.|..||..|.||||.|||.|||.||| 51
+query             0 CTTGATTACTATAAAGATAACACTGGGGCTCTGTATGTCCGTCCGTCCGTC 51
+
+
+*** Alignment(s) ***
+61462094_in_chr5:61462069-61462120|chr14:48653734-48653785(query|target)
+Strand = +/-(query|target)
+Score =  3973.0
+Fraction of mismatches = 5/51 = 9.8%
+target            0 CTTTTGTTAATCACCTCACAGAATAACTTTGAAAAACATTTAGAGAAGAAT 51
+                  0 |.||||||||.|||||||||||||||||||||||||||.||||..|||||| 51
+query             0 CATTTGTTAACCACCTCACAGAATAACTTTGAAAAACAGTTAGGAAAGAAT 51
+
+
+*** Alignment(s) ***
+97567537_in_chr7:97567512-97567563|chr1:152231796-152231847(query|target)
+Strand = +/+(query|target)
+Score =  3804.0
+Fraction of mismatches = 6/51 = 11.8%
+target            0 ATTCATGCTCTGAGTCCTGTAGAAGAAGGATTTGGTTATAACGGTTCTTCT 51
+                  0 .|||||||||||||..|||||||.|||||||||||||||||.|.||||||| 51
+query             0 TTTCATGCTCTGAGCACTGTAGAGGAAGGATTTGGTTATAAAGATTCTTCT 51
+
+
+*** Alignment(s) ***
+100389604_in_chr7:100389579-100389630|chr1:155091838-155091889(query|target)
+Strand = +/+(query|target)
+Score =  3939.0
+Fraction of mismatches = 6/51 = 11.8%
+target            0 ACTCTGGCTAGCTGGTTCAACTGAGCTGTTCTGGCCTAAACTGCCCTCCAA 51
+                  0 |||.||||||||..||||||||.|||||||||||||.|||||||||||.|| 51
+query             0 ACTTTGGCTAGCCTGTTCAACTCAGCTGTTCTGGCCCAAACTGCCCTCTAA 51
+
+
+*** Alignment(s) ***
+128647864_in_chr7:128647839-128647890|chr1:183613311-183613362(query|target)
+Strand = +/+(query|target)
+Score =  3788.0
+Fraction of mismatches = 7/51 = 13.7%
+target            0 CTAGTTTCCAGCGCTCTGTTCTTTGCAACTCAACTCAAGCTTGTGGTTTGA 51
+                  0 |||||.|||||.||.|||.|||||||||||||.|||||.|.|||||||||| 51
+query             0 CTAGTCTCCAGGGCCCTGCTCTTTGCAACTCAGCTCAACCCTGTGGTTTGA 51
+
+
+
+CHECK: alignments for high-quality points only:
+
+... loading existing fasta index
+... done
+... loading existing fasta index
+... done
+
+There are  4  set(s) of extended_point sequences: 
+
+*** Alignment(s) ***
+128467487_in_chr5:128467437-128467538|chr12:28315641-28315742(query|target)
+Strand = +/-(query|target)
+Score =  9009.0
+Fraction of mismatches = 4/101 = 4.0%
+target            0 GTCCTAATGAAGTGCACGGAAATGTTAATGTTATTTGGGATTTTTCATTTCAACTCTTTC
+                  0 |||||||||||||||||||..||||||||||||||||||||||||||||||.||||||||
+query             0 GTCCTAATGAAGTGCACGGGGATGTTAATGTTATTTGGGATTTTTCATTTCGACTCTTTC
+
+target           60 TCAAACTTTTGCCCTCAGACCTTTCTTTTTGATAGATGAAG 101
+                 60 ||||||||||||||||||||||||||||||.|||||||||| 101
+query            60 TCAAACTTTTGCCCTCAGACCTTTCTTTTTAATAGATGAAG 101
+
+
+*** Alignment(s) ***
+61462094_in_chr5:61462044-61462145|chr14:48653709-48653810(query|target)
+Strand = +/-(query|target)
+Score =  8179.0
+Fraction of mismatches = 9/101 = 8.9%
+target            0 AGCCCTTAAATATCAACATGGCAGACTTTTGTTAATCACCTCACAGAATAACTTTGAAAA
+                  0 ||||||||||||||||||.|||||.|.||||||||.||||||||||||||||||||||||
+query             0 AGCCCTTAAATATCAACACGGCAGGCATTTGTTAACCACCTCACAGAATAACTTTGAAAA
+
+target           60 ACATTTAGAGAAGAATAGAAAACAAACCTGGTATATTTCTT 101
+                 60 |||.||||..||||||||||||..||||||||||||||||| 101
+query            60 ACAGTTAGGAAAGAATAGAAAATGAACCTGGTATATTTCTT 101
+
+
+*** Alignment(s) ***
+97567537_in_chr7:97567487-97567588|chr1:152231771-152231872(query|target)
+Strand = +/+(query|target)
+Score =  8049.0
+Fraction of mismatches = 9/101 = 8.9%
+target            0 CAGAGTTTCAAAGACAGCAGAAAACATTCATGCTCTGAGTCCTGTAGAAGAAGGATTTGG
+                  0 |..||||||||||||||||||||||.|||||||||||||..|||||||.|||||||||||
+query             0 CCAAGTTTCAAAGACAGCAGAAAACTTTCATGCTCTGAGCACTGTAGAGGAAGGATTTGG
+
+target           60 TTATAACGGTTCTTCTTTTCACAGAATTATTCCAGGATTCA 101
+                 60 ||||||.|.|||||||||||||||||||||||||.|||||| 101
+query            60 TTATAAAGATTCTTCTTTTCACAGAATTATTCCAAGATTCA 101
+
+
+*** Alignment(s) ***
+100389604_in_chr7:100389554-100389655|chr1:155091813-155091914(query|target)
+Strand = +/+(query|target)
+Score =  8452.0
+Fraction of mismatches = 8/101 = 7.9%
+target            0 GCTCACCCTTTCTAGCTCTTTCTGAACTCTGGCTAGCTGGTTCAACTGAGCTGTTCTGGC
+                  0 ||||||||||||||||||||||||||||.||||||||..||||||||.||||||||||||
+query             0 GCTCACCCTTTCTAGCTCTTTCTGAACTTTGGCTAGCCTGTTCAACTCAGCTGTTCTGGC
+
+target           60 CTAAACTGCCCTCCAAGCTGATGGATTCAAACTGGCTTCTC 101
+                 60 |.|||||||||||.|||||||.|.||||||||||||||||| 101
+query            60 CCAAACTGCCCTCTAAGCTGACGAATTCAAACTGGCTTCTC 101
+
+
+
+NOW CHANGING TO 8% mismatch_rate:
+
+... loading existing fasta index
+... done
+... loading existing fasta index
+... done
+
+points out of bounds: 27
+points mismatched   : 8
+points accepted     : 2
+
+... using query genome (size) file ../data/genomes/mm39/mm39.chrom.sizes
+... using target genome (size) file ../data/genomes/rn7/rn7.chrom.sizes
+... q_stringent_mm39randomSNPs_rn7.bed  unlifted_q_stringent_mm39randomSNPs_rn7.bed  and  t_stringent_mm39randomSNPs_rn7.bed  written
+... loading existing fasta index
+... done
+... loading existing fasta index
+... done
+
+There are  2  set(s) of extended_point sequences: 
+
+*** Alignment(s) ***
+128467487_in_chr5:128467437-128467538|chr12:28315641-28315742(query|target)
+Strand = +/-(query|target)
+Score =  9009.0
+Fraction of mismatches = 4/101 = 4.0%
+target            0 GTCCTAATGAAGTGCACGGAAATGTTAATGTTATTTGGGATTTTTCATTTCAACTCTTTC
+                  0 |||||||||||||||||||..||||||||||||||||||||||||||||||.||||||||
+query             0 GTCCTAATGAAGTGCACGGGGATGTTAATGTTATTTGGGATTTTTCATTTCGACTCTTTC
+
+target           60 TCAAACTTTTGCCCTCAGACCTTTCTTTTTGATAGATGAAG 101
+                 60 ||||||||||||||||||||||||||||||.|||||||||| 101
+query            60 TCAAACTTTTGCCCTCAGACCTTTCTTTTTAATAGATGAAG 101
+
+
+*** Alignment(s) ***
+100389604_in_chr7:100389554-100389655|chr1:155091813-155091914(query|target)
+Strand = +/+(query|target)
+Score =  8452.0
+Fraction of mismatches = 8/101 = 7.9%
+target            0 GCTCACCCTTTCTAGCTCTTTCTGAACTCTGGCTAGCTGGTTCAACTGAGCTGTTCTGGC
+                  0 ||||||||||||||||||||||||||||.||||||||..||||||||.||||||||||||
+query             0 GCTCACCCTTTCTAGCTCTTTCTGAACTTTGGCTAGCCTGTTCAACTCAGCTGTTCTGGC
+
+target           60 CTAAACTGCCCTCCAAGCTGATGGATTCAAACTGGCTTCTC 101
+                 60 |.|||||||||||.|||||||.|.||||||||||||||||| 101
+query            60 CCAAACTGCCCTCTAAGCTGACGAATTCAAACTGGCTTCTC 101
+
+Current date and time entering annotate_lopset    : 2023-10-18 11:42:54
+Current date and time done with qfeature_intervals: 2023-10-18 11:43:10
+Current date and time done with qbed intersection : 2023-10-18 11:43:10
+Current date and time done with qfeatures         : 2023-10-18 11:43:10
+Current date and time done with ubed intersection : 2023-10-18 11:43:11
+Current date and time done with ufeatures         : 2023-10-18 11:43:11
+Current date and time done with feature_intervals : 2023-10-18 11:43:25
+Current date and time done with tbed intersection : 2023-10-18 11:43:26
+Current date and time done with tfeatures         : 2023-10-18 11:43:26
+
+
+CHECK: qfeatures:
+
+Query point	mm39_chr5_128467487+	overlaps feature	['intron']	[['chr5', '128346441', '128509349', '-', 'intron', 'Tmem132d']]
+Query point	mm39_chr7_100389604+	overlaps feature	['intron']	[['chr7', '100356100', '100436010', '+', 'intron', 'Fam168a']]
+
+
+CHECK: ufeatures:
+
+Unlifted query point	mm39_chr5_5904994+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_17562626+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_28114789+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_52491704+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_72674613+	overlaps feature	['intron']	[['chr5', '72674455', '72675537', '-', 'intron', 'Nfxl1']]
+Unlifted query point	mm39_chr5_80795494+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr5_130506260+	overlaps feature	['intron']	[['chr5', '130443787', '130534904', '+', 'intron', 'Caln1']]
+Unlifted query point	mm39_chr5_151407248+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_10033162+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_11025594+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_11556693+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_14720772+	overlaps feature	['intergenic']	[]
+Unlifted query point	mm39_chr7_101264597+	overlaps feature	['intergenic']	[]
+
+
+CHECK: tfeatures:
+
+Target point	rn7_chr1_155091863+	overlaps feature	['intron']	[['chr1', '155057563', '155142248', '+', 'intron', 'Fam168a']]
+Target point	rn7_chr12_28315691-	overlaps feature	('RNA', 'intron')	(['chr12', '28309240', '28329042', '+', 'lnc_RNA', 'LOC120095943'], ['chr12', '28270829', '28560668', '+', 'intron', 'Tmem132d'])
+
+
+Annotation data frame for the stringently filtered points:
+
+                     qkey  qftype                 tkey      tftype qgann_chr qgann_from   qgann_to qgann_strand qgann_ftype qgann_gene    tgann_chr         tgann_from           tgann_to tgann_strand     tgann_ftype             tgann_gene
+0  mm39_chr5_128467487+_1  intron  rn7_chr12_28315691-  RNA,intron      chr5  128346441  128509349            -      intron   Tmem132d  chr12,chr12  28309240,28270829  28329042,28560668          +,+  lnc_RNA,intron  LOC120095943,Tmem132d
+1  mm39_chr7_100389604+_1  intron  rn7_chr1_155091863+      intron      chr7  100356100  100436010            +      intron    Fam168a         chr1          155057563          155142248            +          intron                Fam168a
+... building a pickle for  stringent_mm39randomSNPs_rn7
+... done
+Consider adding the pickle to your gainsaw.conf file.
+

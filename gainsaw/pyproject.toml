@@ -1,0 +1,28 @@
+[project]
+name = "GAinSAW"
+version = "0.1"
+description = "Genome Alignment chain file Selection and Annotation wrench."
+authors = [
+    {name = "Wenshu Chen", email = "wenschen@indiana.edu"},
+    {name = "Volker Brendel", email = "vbrendel@indiana.edu"}
+]
+dependencies = []
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["bioinformatics liftover genome-analysis"]
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.urls]
+Homepage = "https://github.com/BrendelGroup/GAainSAW"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"

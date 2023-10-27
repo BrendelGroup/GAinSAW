@@ -1,0 +1,61 @@
+The Chain Format is described here:
+	https://genome.ucsc.edu/goldenPath/help/chain.html
+
+HOWEVER:
+  A chain file like aToB.over.chain.gz is meant to convert "a" coordinates
+to "B" coordinates, according to
+	https://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
+which states
+
+"The file names reflect the assembly conversion data contained within
+in the format <db1>To<Db2>.over.chain.gz. For example, a file named
+hg15ToHg16.over.chain.gz file contains the liftOver data needed to
+convert hg15 (Human Build 33) coordinates to hg16 (Human Build 34)."
+
+Thus, the description of the Chain Format as per chain.html is peculiar
+and confusing (to us) with respect to "target" and "query"; according to
+	http://genomewiki.ucsc.edu/index.php/Chains_Nets
+this is "chain and net lingo."
+
+THEREFORE:
+  Our code will interpret the chain header lines as
+
+chain score qName qSize qStrand qStart qEnd tName tSize tStrand tStart tEnd id
+
+That is to say, the first coordinate set responds to the "query" genome (i.e.,
+hg15 in the example above), and the second coordinate set responds to the
+"target" genome (i.e., Hg16 in the example above). This is consistent with
+the chain files analyzed: the first coordinate set is always with qStrand = "+",
+whereas the second set shows mapping to the target on either "+" or "-" strand.
+
+
+Chain coordinate to GenBank coordinate mapping
+  The chain coordinates are given according to the following description from
+https://genome.ucsc.edu/goldenPath/help/chain.html:
+
+"The alignment start and end positions are represented as zero-based half-open
+intervals. For example, the first 100 bases of a sequence would be represented
+with start position = 0 and end position = 100, and the next 100 bases would be
+represented as start position = 100 and end position = 200. When the strand
+value is '-', position coordinates are listed in terms of the
+reverse-complemented sequence."
+
+For mere mortals, it is easier to comprehend the coordinates in the GenBank
+style (numbering relative to the database '+' strand, starting from 1). The
+requisite translation is as follows:
+
+qStart, qEnd              	=>	qStart + 1, qEnd
+tStrand = '+', tStart, tEnd	=>	tStart + 1, tEnd
+tStrand = '-', tStart, tEnd	=>	tSize - tEnd + 1, tSize - tStart
+
+For example, the UCSC file hg38ToRheMac10.over.chain has the following entries
+(note, the in macaque, human chromosomes 20 and 22 are fused to macaque chromosome 10):
+
+chain 4902 chr22 50818468 + 32351421 32351697 chr10 99517758 + 30874275 30874555 99107
+chain 39753 chr22 50818468 + 32141527 32145185 chr10 99517758 - 72808263 72810332 22038
+
+The target (macaque) sequence for the second chain is chr10, from
+	99517758 - 72810332 + 1 = 26707427
+to
+	99517758 - 72808263a    = 26709495
+(with the match being the reverse complement of the segment).

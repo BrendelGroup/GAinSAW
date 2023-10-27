@@ -1,0 +1,643 @@
+#!/usr/bin/env python
+#
+import argparse
+import os
+import shutil
+import subprocess
+import urllib.parse
+import gzip
+from configparser import ConfigParser
+
+
+def readable_file(filename, writeable=False, create=False, unzip=False):
+    if not os.path.isfile(filename):
+        if create:
+            subprocess.call(['touch', filename])
+        else:
+            raise argparse.ArgumentTypeError(f"{filename} does not exist")
+    if not os.access(filename, os.R_OK):
+        raise argparse.ArgumentTypeError(f"{filename} is not readable")
+    
+    if writeable and not os.access(filename, os.W_OK):
+        raise argparse.ArgumentTypeError(f"{filename} is not writeable")
+    
+    if unzip == True:
+        # Check if the file is in gzip format:
+        is_gzip = False
+        with open(filename, "rb") as f:
+            is_gzip = f.read(2) == b'\x1f\x8b'
+ 
+        # If it is, unzip it and return the unzipped filename:
+        if is_gzip:
+            unzipped_filename = filename.rstrip(".gz")
+            with gzip.open(filename, "rb") as f_in, open(unzipped_filename, "wb") as f_out:
+               shutil.copyfileobj(f_in, f_out)
+            return unzipped_filename
+        else:
+            return filename
+    else:
+        return filename
+
+
+def download_function(args):
+    print("Executing download function with args:", args)
+    print("Input:", args.input)
+    print("Download directory:", args.download_dir)
+
+    def download_file(url, label, download_dir):
+        # Get the filename from the URL
+        filename = os.path.basename(urllib.parse.urlsplit(url).path)
+
+        # Create the directory for the label under the download_dir
+        label_directory = os.path.join(download_dir, label)
+        os.makedirs(label_directory, exist_ok=True)
+
+        # Set the download path
+        download_path = os.path.join(label_directory, filename)
+
+        # Run the command to download the file using wget or equivalent
+        subprocess.run(['wget', url, '-O', download_path])
+
+    def copy_file(filename, label, download_dir):
+        # Create the directory for the label under the download_dir
+        label_directory = os.path.join(download_dir, label)
+        os.makedirs(label_directory, exist_ok=True)
+
+        # Get the filename from the path
+        filename = os.path.basename(filename)
+
+        # Set the copy destination path
+        copy_dest = os.path.join(label_directory, filename)
+
+        # Copy the file into the label directory
+        shutil.copy2(filename, copy_dest)
+
+    def process_paragraph(lines, download_dir):
+        data = {
+            "Label": "",
+            "gDNA": "",
+            "Sizes": "",
+            "GFF": "",
+            "Alias": "",
+            "Chain": []
+        }
+
+        # Extract values for each key
+        for line in lines:
+            key, value = line.strip().split('\t', 1)
+            if key == "Chain":
+                data[key].append(value)
+            else:
+                data[key] = value
+
+        # Use the value of "Label" for the directory name
+        label = data.get("Label", "unknown_label")
+
+        # Check if the value is a URL and download the file
+        for key, value in data.items():
+            if key != "Label" and value != '':
+                if key == "Chain":
+                    for c in value:
+                        if c.startswith('http://') or c.startswith('https://'):
+                            download_file(c, label, download_dir)
+                        else:
+                            # Assume it's a filename and copy the file
+                            copy_file(c, label, download_dir)
+                else:
+                    if value.startswith('http://') or value.startswith('https://'):
+                        download_file(value, label, download_dir)
+                    else:
+                        # Assume it's a filename and copy the file
+                        copy_file(value, label, download_dir)
+        return data
+
+    def read_input(filename, download_dir):
+        data_list = []  # List to store data from multiple paragraphs
+        current_paragraph = []
+        
+        if not os.path.exists(filename):
+            print(f"File '{filename}' not found.")
+            return data_list
+
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+
+            for line in lines:
+                line = line.strip()
+
+                # Skip comments and blank lines
+                if not line or line.startswith('#'):
+                    continue
+
+                # Start of a new paragraph
+                if line.startswith('Label'):
+                    if current_paragraph:
+                        data = process_paragraph(current_paragraph, download_dir)
+                        data_list.append(data)
+                        current_paragraph = []  # Reset for the next paragraph
+
+                current_paragraph.append(line)
+
+            # Process the last paragraph
+            if current_paragraph:
+                data = process_paragraph(current_paragraph, download_dir)
+                data_list.append(data)
+
+        return data_list
+
+    results = read_input(args.input,args.download_dir)
+    print("Data from file:")
+    for idx, result in enumerate(results):
+        print(f"Paragraph {idx + 1}:")
+        print(result)
+
+
+def prepare_function(args):
+    import glob
+    import sys
+    from gainsaw import align
+    print("Executing prepare function with args:", args)
+    print("Genome label:", args.genome_label)
+    print("Genome FASTA:", args.genome_fasta)
+    print("Genome size file:", args.genome_size)
+    print("Genome GFF:", args.genome_GFF)
+    print("Genome alias file:", args.genome_alias)
+    print("Chain file directory:", args.chaindir)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    # Create the directory if it doesn't exist
+    genome_dir = os.path.join(args.data_dir, "genomes", args.genome_label)
+    os.makedirs(genome_dir, exist_ok=True)
+
+    if args.genome_fasta != None:
+        if args.genome_alias == None or args.genome_size == None:
+            sys.stderr.write("\nPlease supply arguments for the genome size and alias files.\n")
+            sys.exit()
+        # Create compliant genome FASTA file in the genome directory and index
+        #
+        fasta_dest = os.path.join(genome_dir, f"{args.genome_label}.fna")
+        xfasta_cmd = f"chromToUcsc -a {args.genome_alias} -i {args.genome_fasta} -o {fasta_dest}"
+        try:
+            subprocess.run(xfasta_cmd, shell=True, check=True)
+        except subprocess.CalledProcessError:
+            print("Error running xfasta command.")
+            return
+        align.get_fasta_index(fasta_dest)
+
+        # Copy genome size and alias files to the genome directory
+        size_dest = os.path.join(genome_dir, f"{args.genome_label}.chrom.sizes")
+        shutil.copy(args.genome_size, size_dest)
+        alias_dest = os.path.join(genome_dir, f"{args.genome_label}.ChromAlias")
+        shutil.copy(args.genome_alias, alias_dest)
+
+    if args.genome_GFF != None:
+        # Deposit compliant annotation file
+        #
+        gff_dest = os.path.join(genome_dir, f"{args.genome_label}.gff")
+        xgff_cmd = f"chromToUcsc -a {args.genome_alias} -i {args.genome_GFF} -o {gff_dest}"
+        try:
+            subprocess.run(xgff_cmd, shell=True, check=True)
+        except subprocess.CalledProcessError:
+            print("Error running xgff command.")
+            return
+    
+        #   Run xtidyGFF command
+        xtidyGFF_cmd = f"xtidyGFF {gff_dest}"
+        try:
+            subprocess.run(xtidyGFF_cmd, shell=True, check=True)
+        except subprocess.CalledProcessError:
+            print("Error running xtidyGFF command.")
+            return
+    
+        #   Check if tidy-arg.genome_GFF.bed exists and move it
+        tidy_output = os.path.dirname(os.path.abspath(gff_dest)) + "/" + "tidy-" + \
+                      os.path.splitext(os.path.basename(gff_dest))[0] + ".bed"
+        if os.path.exists(tidy_output):
+            tidy_dest = os.path.join(genome_dir, f"{args.genome_label}.tidyann.bed")
+            shutil.move(tidy_output, tidy_dest)
+        else:
+            print(f"Expected tidy output file {tidy_output} not found.")
+    
+    # Check for chain files and move them
+    #
+    liftovers_dir = os.path.join(args.data_dir, "liftovers")
+    os.makedirs(liftovers_dir, exist_ok=True)
+    for chainname in glob.iglob(f'{args.chaindir}/*chain*'):
+        chain_dest = liftovers_dir + '/' + os.path.basename(chainname)
+        shutil.move(chainname, chain_dest)
+
+    # Modify the config file
+    config_file_path = os.path.dirname(args.config_file)
+    config = ConfigParser()
+    config.optionxform = str    # ... makes the config keys case sensitive
+    config.read(args.config_file)
+    
+    genome_section = args.genome_label
+    if not config.has_section(genome_section):
+        config.add_section(genome_section)
+    if args.genome_fasta != None:
+        config.set(genome_section, "fna", os.path.relpath(fasta_dest, config_file_path))
+        config.set(genome_section, "gdx", os.path.relpath(fasta_dest+'.pkl', config_file_path))
+    if args.genome_size != None:
+        config.set(genome_section, "chr", os.path.relpath(size_dest, config_file_path))
+    if args.genome_GFF != None:
+        config.set(genome_section, "ann", os.path.relpath(tidy_dest, config_file_path))
+
+    if args.chaindir != None:
+        liftover_section = 'liftovers'
+        if not config.has_section(liftover_section):
+            config.add_section(liftover_section)
+        for chainname in glob.iglob(f'{args.data_dir}/liftovers/*chain*'):
+            chain_filename = os.path.basename(chainname)
+            chain_label = chain_filename.split('.')[0]
+            config.set(liftover_section, chain_label, chainname)
+
+    with open(args.config_file, "w") as config_file:
+        config.write(config_file)
+
+    print("\nDone with gainsaw prepare.")
+    print(f"All files needed for future analyses have been deposited in the {args.data_dir}")
+    print(f"directory, and shortcuts are accessible as per {args.config_file}.")
+    print("If everything looks ok, you may now (re)move original input files.")
+
+
+def liftover_function(args):
+    from gainsaw import (gsconf, LiftOver)
+    print("Executing liftover function with args:", args)
+    print("Genome alignment chainfile:", args.chainfile)
+    print("Chainfile output label:", args.output_label)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    # Create the directory if it doesn't exist
+    liftovers_dir = os.path.join(args.data_dir, "liftovers")
+    os.makedirs(liftovers_dir, exist_ok=True)
+
+    lo = LiftOver(args.chainfile)
+    liftover_dest = os.path.join(liftovers_dir, f"{args.output_label}.lo.pkl")
+    shutil.move(args.chainfile+'.lo.pkl', liftover_dest)
+
+    # Modify the config file
+    config_file_path = os.path.dirname(args.config_file)
+    config = ConfigParser()
+    config.optionxform = str
+    config.read(args.config_file)
+    
+    liftover_section = 'liftovers'
+    if not config.has_section(liftover_section):
+        config.add_section(liftover_section)
+    
+    config.set(liftover_section, args.output_label, os.path.relpath(liftover_dest, config_file_path))
+    with open(args.config_file, "w") as config_file:
+        config.write(config_file)
+
+    print("\nDone with gainsaw liftover.")
+    print("You may now safely remove original input files and any temporary files")
+    print("produced in this directory.")
+    print(f"All files needed for future analyses have been deposited in the {args.data_dir}")
+    print(f"directory, and shortcuts are accessible as per {args.config_file}.")
+
+
+def pointset_function(args):
+    from gainsaw import (gsconf, LiftOver, PointSet)
+    print("Executing pointset function with args:", args)
+    print("PointSet:", args.pointset)
+    print("LiftOver object:", args.liftover)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    # Create the directory if it doesn't exist
+    pointsets_dir = os.path.join(args.data_dir, "pointsets")
+    os.makedirs(pointsets_dir, exist_ok=True)
+
+    gsconf.read(args.config_file)
+    lo = LiftOver(args.liftover)
+    ps = PointSet(lo,args.pointset)
+    ps.lopset.pickle_lopset(args.pointset)
+
+    pslabel = os.path.splitext(os.path.basename(args.pointset))[0]
+    pointset_dest = args.data_dir + '/pointsets/' + pslabel + ".lops.pkl"
+    shutil.move(args.pointset+'.lops.pkl', pointset_dest)
+
+    # Modify the config file
+    config_file_path = os.path.dirname(args.config_file)
+    config = ConfigParser()
+    config.optionxform = str
+    config.read(args.config_file)
+    
+    pointset_section = 'pointsets'
+    if not config.has_section(pointset_section):
+        config.add_section(pointset_section)
+    
+    config.set(pointset_section, pslabel, os.path.relpath(pointset_dest, config_file_path))
+    with open(args.config_file, "w") as config_file:
+        config.write(config_file)
+
+    print("\nDone with gainsaw pointset.")
+    print("You may now safely remove original input files and any temporary files")
+    print("produced in this directory.")
+    print(f"All files needed for future analyses have been deposited in the {args.data_dir}")
+    print(f"directory, and shortcuts are accessible as per {args.config_file}.")
+
+
+def align_function(args):
+    from gainsaw import align
+    from gainsaw import get_lopset
+    from gainsaw import (cfcheck, gsconf, gsparams, gsscrs, BedWrap)
+    import sys
+
+    print("Executing align function with args:", args)
+    print("Query genome label:", args.qgenome_label)
+    print("Target genome label:", args.tgenome_label)
+    print("PoinSet:", args.pointset)
+    print("Slop_size:", args.slop_size)
+    print("Scoring matrix:", args.smatrix)
+    print("Re-align:", args.realign)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    if args.smatrix not in ('default', 'blastn', 'lastz'):
+        sys.stderr.write("\nError. Scoring matrix should be one of 'default', 'blastn', or 'lastz'.")
+        sys.exit()
+
+    if cfcheck(args.config_file): gsconf.read(args.config_file)
+    psl = get_lopset(args.pointset)
+    mycrt = gsparams._replace(qlabel=args.qgenome_label,tlabel=args.tgenome_label,slop_size=args.slop_size)
+    if not hasattr(psl,"sequences")  or  args.realign == True:
+        sys.stderr.write(f"... re-aligning sequences and updating the {args.pointset} pointset pickle")
+        psl.align_seqset(args.qgenome_label, args.tgenome_label, mycrt)
+    psl.write_alignments(eval('gsscrs.'+args.smatrix))
+    psl.pickle_lopset(args.pointset)
+
+    pslabel = os.path.splitext(os.path.basename(args.pointset))[0]
+    pointset_dest = args.data_dir + '/pointsets/' + pslabel + ".lops.pkl"
+    shutil.copy(args.pointset+'.lops.pkl', pointset_dest)
+
+    # Modify the config file
+    config_file_path = os.path.dirname(args.config_file)
+    config = ConfigParser()
+    config.optionxform = str
+    config.read(args.config_file)
+    
+    pointset_section = 'pointsets'
+    if not config.has_section(pointset_section):
+        config.add_section(pointset_section)
+    
+    config.set(pointset_section, pslabel, os.path.relpath(pointset_dest, config_file_path))
+    with open(args.config_file, "w") as config_file:
+        config.write(config_file)
+
+    print("\nDone with gainsaw align.")
+    print("You may now safely remove original input files and any temporary files")
+    print("produced in this directory.")
+    print(f"All files needed for future analyses have been deposited in the {args.data_dir}")
+    print(f"directory, and shortcuts are accessible as per {args.config_file}.")
+
+
+def filter_function(args):
+    from gainsaw import (cfcheck, gsconf, gsparams, BedWrap, LiftOver, PointSet,
+                         get_lopset)
+    from pybedtools import BedTool
+
+    print("Executing filter function with args:", args)
+    print("Query genome label:", args.qgenome_label)
+    print("Target genome label:", args.tgenome_label)
+    print("PointSet:", args.pointset)
+    print("Slop_size:", args.slop_size)
+    print("Mismatch rate:", args.mismatch_rate)
+    print("Filtering mode:", args.filter_mode)
+    print("Set filter level:", args.set_filter_level)
+    print("Use filter level:", args.use_filter_level)
+    if args.npoints == 0:
+        print("Number of points to display:", "all")
+    else:
+        print("Number of points to display:", args.npoints)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    if cfcheck(args.config_file): gsconf.read(args.config_file)
+    psl = get_lopset(args.pointset)
+
+    mycrt = gsparams._replace(setpfilter=args.set_filter_level, usepfilter=args.use_filter_level,
+                              slop_size=args.slop_size, mismatch_rate=args.mismatch_rate)
+    psl.filter_pdata(args.qgenome_label, args.tgenome_label, mycrt)
+    print(f"\n\nLabeled points at level {args.set_filter_level}:\n")
+    psl.check_pdata(args.npoints)
+    srfilter=f's{args.slop_size}r{args.mismatch_rate}'
+    mycrt = mycrt._replace(slop_size=0)
+    psl.make_beds(mycrt,
+                  'q_filtered_'+srfilter+"_"+args.filter_mode+"_"+str(args.use_filter_level)+"_"+args.pointset, args.qgenome_label,
+                  't_filtered_'+srfilter+"_"+args.filter_mode+"_"+str(args.use_filter_level)+"_"+args.pointset, args.tgenome_label)
+
+    # Pickle the LiftOverPointSet with all points:
+    #
+    psl.pickle_lopset('filtered_'+srfilter+"_level"+str(args.set_filter_level)+"_allpoints_"+args.pointset)
+
+    # Pickle the LiftOverPointSet of accepted points:
+    #
+    psl.get_filtered_pdata(mycrt, mode = args.filter_mode)
+    psl.pickle_lopset("filtered_"+srfilter+"_"+args.filter_mode+"_"+str(args.use_filter_level)+"_accepted_"+args.pointset)
+    print(f"\n\nAccepted points at level {args.use_filter_level}:\n")
+    psl.check_pdata(args.npoints)
+
+
+def annotate_function(args):
+    from gainsaw import (cfcheck, gsconf, gsparams, BedWrap, LiftOver, PointSet,
+                         get_lopset)
+    from pybedtools import BedTool
+    import pandas as pd
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.max_colwidth', None)
+    pd.set_option('display.width', None)
+
+    print("Executing annotate function with args:", args)
+    print("Query genome label:", args.qgenome_label)
+    print("Target genome label:", args.tgenome_label)
+    print("PointSet:", args.pointset)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    if cfcheck(args.config_file): gsconf.read(args.config_file)
+    psl = get_lopset(args.pointset)
+    mycrt = gsparams._replace(qlabel=args.qgenome_label,tlabel=args.tgenome_label,slop_size=0)
+    psl.make_beds(mycrt, 'q_'+args.pointset, args.qgenome_label, 't_'+args.pointset, args.tgenome_label)
+
+    qgann = BedWrap(args.qgenome_label)
+    tgann = BedWrap(args.tgenome_label)
+    psl.annotate_lopset(mycrt, qgann.bed, tgann.bed)
+    psl.create_annotation_dataframe()
+    ### Maybe need a flag here to write?
+    psl.write_annotation_dataframe()
+    psl.pickle_lopset(args.data_dir+"/pointsets/"+args.pointset)
+
+
+def findgene_function(args):
+    from gainsaw import (cfcheck, gsconf, gsparams, BedWrap)
+    from pybedtools import BedTool
+
+    print("Executing findgene function with args:", args)
+    print("Gene name:", args.gene_name)
+    print("Query genome label:", args.qgenome_label)
+    print("Target genome label:", args.tgenome_label)
+    print("LiftOver object:", args.liftover)
+    print("Number of points to sample:", args.npoints)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    if cfcheck(args.config_file): gsconf.read(args.config_file)
+    qgann = BedWrap(args.qgenome_label)
+    gene_interval = None
+    for feature in qgann.bed:
+        if feature[4] == 'gene' and feature[5] == args.gene_name:
+            gene_interval = feature
+            break
+    print(gene_interval)
+    
+    if gene_interval:
+        start, end = int(gene_interval.start), int(gene_interval.end)
+        spacing = (end - start) / (args.npoints -1)
+        gene_points = []
+        gene_points.append((gene_interval[0],start,start+1,'+','genepoint',args.gene_name))
+        for i in range(1,args.npoints):
+            point_start = start-1 + int(i * spacing)
+            gene_points.append((gene_interval[0],point_start,point_start+1,'+','genepoint',args.gene_name))
+        BedTool(gene_points).saveas(args.gene_name+'.bed')
+        print(gene_points)
+        pointset_function(argparse.Namespace(subcommand='pointset', pointset=args.gene_name+'.bed',
+                          liftover=args.liftover, data_dir=args.data_dir, config_file=args.config_file))
+        annotate_function(argparse.Namespace(subcommand='annotate', qgenome_label=args.qgenome_label,
+                          tgenome_label=args.tgenome_label, pointset=args.gene_name,
+                          data_dir=args.data_dir, config_file=args.config_file))
+    else:
+        print(f"... gene {args.gene_name} not found in {args.qgenome_label} annotation.")
+
+
+def check_function(args):
+    from gainsaw import (cfcheck, gsconf, gsparams, get_lopset)
+
+    print("Executing check function with args:", args)
+    print("Pointset:", args.pointset)
+    if args.npoints == 0:
+       print("Number of points to display:", "all")
+    else:
+       print("Number of points to display:", args.npoints)
+    print("Data directory:", args.data_dir)
+    print("Config file:", args.config_file)
+
+    if cfcheck(args.config_file): gsconf.read(args.config_file)
+    psl = get_lopset(args.pointset)
+    psl.check_pdata(args.npoints)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="gainsaw CLI")
+    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+
+    # Download subcommand
+    download_parser = subparsers.add_parser("download", help="Download data")
+    download_parser.add_argument("-i", "--input", type=str, default="data_sources.txt", help="Structured input file defining data sources")
+    download_parser.add_argument("-D", "--download_dir", type=str, default="./", help="Download directory (default: ./downloads)")
+
+    # Prepare subcommand
+    prepare_parser = subparsers.add_parser("prepare", help="Prepare data")
+    prepare_parser.add_argument("-q", "-t", "--genome_label", type=str, default="mm39", help="Genome label (default: mm39)")
+    prepare_parser.add_argument("-f", "--genome_fasta", type=lambda x: readable_file(x), help="Genome sequences in FASTA format (default: mm39.fna)")
+    prepare_parser.add_argument("-z", "--genome_size", type=lambda x: readable_file(x), help="Genome size file (default: mm39.chrom.sizes)")
+    prepare_parser.add_argument("-a", "--genome_GFF", type=lambda x: readable_file(x),  help="Genome GFF file (default: mm39.gff)")
+    prepare_parser.add_argument("-A", "--genome_alias", type=lambda x: readable_file(x), help="Genome alias file (default: mm39_chromAlias.txt)")
+    prepare_parser.add_argument("-C", "--chaindir", type=str, default="./", help="Directory to look for *chain* files")
+    prepare_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    prepare_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True, create=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+    # Liftover subcommand
+    liftover_parser = subparsers.add_parser("liftover", help="Perform liftover")
+    liftover_parser.add_argument("-i", "--chainfile", type=lambda x: readable_file(x), default="mm39ToRn7", help="Genome alignment chainfile (default: mm39ToRn7)")
+    liftover_parser.add_argument("-o", "--output_label", type=str, default="something", help="Genome alignment chainfile (default: mm39To)")
+    liftover_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    liftover_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+    # Pointset subcommand
+    pointset_parser = subparsers.add_parser("pointset", help="Process pointset")
+    pointset_parser.add_argument("-p", "--pointset", type=lambda x: readable_file(x), default="mm39randomSNPs.bed", help="Pointset in bed format (default: mm39randomSNPs.bed)")
+    pointset_parser.add_argument("-l", "--liftover", type=str, default="mm39ToRn7", help="LiftOver object pickle (default: mm39ToRn7)")
+    pointset_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    pointset_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+
+    # Align subcommand
+    align_parser = subparsers.add_parser("align", help="Align query and target genomes near points")
+    align_parser.add_argument("-q", "--qgenome_label", type=str, default="mm39", help="Query genome label (default: mm39)")
+    align_parser.add_argument("-t", "--tgenome_label", type=str, default="rn7", help="Target genome label (default: rn7)")
+    align_parser.add_argument("-p", "--pointset", type=str, default="mm39randomSNPs", help="Pointset in bed format (default: mm39randomSNPs)")
+    align_parser.add_argument("-s", "--slop_size", type=int, default=25, help="Slop size extending points (default: 25)")
+    align_parser.add_argument("-x", "--smatrix", type=str, default='default', help="Scoring matrix for alignments")
+    align_parser.add_argument("-r", "--realign", default=False, action=argparse.BooleanOptionalAction, help="Overwrite existing alignments [default: no_realign]")
+    align_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    align_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+# filter subcommand
+    filter_parser = subparsers.add_parser("filter", help="Filter point pairs based on alignment quality")
+    filter_parser.add_argument("-q", "--qgenome_label", type=str, default="mm39", help="Query genome label (default: mm39)")
+    filter_parser.add_argument("-t", "--tgenome_label", type=str, default="rn7", help="Target genome label (default: rn7)")
+    filter_parser.add_argument("-p", "--pointset", type=str, default="mm39randomSNPs", help="Pointset in bed format (default: mm39randomSNPs)")
+    filter_parser.add_argument("-s", "--slop_size", type=int, default=25, help="Slop size extending points (default: 25)")
+    filter_parser.add_argument("-r", "--mismatch_rate", type=int, default=10, help="Acceptable mismatch rate (default: 10)")
+    filter_parser.add_argument("--set_filter_level", type=int, default=2, help="Filter level to annotated acceptable points (default: 2)")
+    filter_parser.add_argument("-m", "--filter_mode", type=str, default="equal", help="Filtering mode (default: 'equal'; other options: 'at_least', 'at_most')")
+    filter_parser.add_argument("--use_filter_level", type=int, default=2, help="Filter level to select acceptable points (default: 2)")
+    filter_parser.add_argument("-n", "--npoints", type=int, default="10", help="Number of points to sample (default: 10)")
+    filter_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    filter_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+# Annotate subcommand
+    annotate_parser = subparsers.add_parser("annotate", help="Annotate points by genome features")
+    annotate_parser.add_argument("-q", "--qgenome_label", type=str, default="mm39", help="Query genome label (default: mm39)")
+    annotate_parser.add_argument("-t", "--tgenome_label", type=str, default="rn7", help="Target genome label (default: rn7)")
+    annotate_parser.add_argument("-p", "--pointset", type=str, default="mm39randomSNPs", help="Pointset in bed format (default: mm39randomSNPs)")
+    annotate_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    annotate_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+# Findgene subcommand
+    findgene_parser = subparsers.add_parser("findgene", help="Probe liftover of query gene")
+    findgene_parser.add_argument("-g", "--gene_name", type=str, default="Ctbp1", help="Gene name in query annotation file (default: Ctbp1)")
+    findgene_parser.add_argument("-q", "--qgenome_label", type=str, default="mm39", help="Query genome label (default: mm39)")
+    findgene_parser.add_argument("-t", "--tgenome_label", type=str, default="rn7", help="Target genome label (default: rn7)")
+    findgene_parser.add_argument("-l", "--liftover", type=str, default="mm39ToRn7", help="LiftOver object pickle (default: mm39ToRn7)")
+    findgene_parser.add_argument("-n", "--npoints", type=int, default="10", help="Number of points to sample (default: 10)")
+    findgene_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    findgene_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+    # Check subcommand
+    check_parser = subparsers.add_parser("check", help="Check data point sets")
+    check_parser.add_argument("-p", "--pointset", type=str, default="mm39randomSNPs", help="Pointset in bed format (default: mm39randomSNPs)")
+    check_parser.add_argument("-n", "--npoints", type=int, default="10", help="Number of points to display (default: 10; 0 to show all)")
+    check_parser.add_argument("-d", "--data_dir", type=str, default="./", help="Data directory (default: ./)")
+    check_parser.add_argument("-c", "--config_file", type=lambda x: readable_file(x, writeable=True), default="my.gainsaw.conf", help="Gainsaw configuration file (default: my.gainsaw.conf)")
+
+
+    args = parser.parse_args()
+
+    if args.subcommand == "download":
+        download_function(args)
+    elif args.subcommand == "prepare":
+        prepare_function(args)
+    elif args.subcommand == "liftover":
+        liftover_function(args)
+    elif args.subcommand == "pointset":
+        pointset_function(args)
+    elif args.subcommand == "align":
+        align_function(args)
+    elif args.subcommand == "filter":
+        filter_function(args)
+    elif args.subcommand == "annotate":
+        annotate_function(args)
+    elif args.subcommand == "findgene":
+        findgene_function(args)
+    elif args.subcommand == "check":
+        check_function(args)
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
